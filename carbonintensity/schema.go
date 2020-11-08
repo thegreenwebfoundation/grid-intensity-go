@@ -11,7 +11,7 @@ type IntensityData struct {
 }
 
 type Intensity struct {
-	Forecast int    `json:"forecast"`
-	Actual   int    `json:"actual"`
-	Index    string `json:"index"`
+	Forecast float64 `json:"forecast"`
+	Actual   float64 `json:"actual"`
+	Index    string  `json:"index"`
 }

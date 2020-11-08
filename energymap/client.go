@@ -51,7 +51,7 @@ type ApiClient struct {
 }
 
 func (a *ApiClient) GetCarbonIndex(ctx context.Context, region string) (gridintensity.CarbonIndex, error) {
-	intensity, err := a.getCarbonIntensity(ctx, region)
+	intensity, err := a.GetCarbonIntensity(ctx, region)
 	if err != nil {
 		return gridintensity.UNKNOWN, err
 	}
@@ -82,7 +82,7 @@ func (a *ApiClient) MinIntensity(ctx context.Context, regions ...string) (string
 
 	for _, region := range regions {
 		go func(r string) {
-			intensity, err := a.getCarbonIntensity(ctx, r)
+			intensity, err := a.GetCarbonIntensity(ctx, r)
 			errChan <- err
 			if err != nil {
 				return
@@ -111,7 +111,7 @@ func (a *ApiClient) MinIntensity(ctx context.Context, regions ...string) (string
 	}
 }
 
-func (a *ApiClient) getCarbonIntensity(ctx context.Context, region string) (float64, error) {
+func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", a.intensityURLWithZone(region), nil)
 	if err != nil {
 		return 0, err

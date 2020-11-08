@@ -39,37 +39,12 @@ type ApiClient struct {
 }
 
 func (a *ApiClient) GetCarbonIndex(ctx context.Context, region string) (gridintensity.CarbonIndex, error) {
-	if region != "UK" {
-		return gridintensity.UNKNOWN, ErrOnlyUK
-	}
 
-	req, err := http.NewRequestWithContext(ctx, "GET", a.apiURL, nil)
+	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
 	if err != nil {
 		return gridintensity.UNKNOWN, err
 	}
-	resp, err := a.client.Do(req)
-	if err != nil {
-		return gridintensity.UNKNOWN, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return gridintensity.UNKNOWN, errBadStatus(resp)
-	}
-
-	respObj := &CarbonIntensityResponse{}
-
-	err = json.NewDecoder(resp.Body).Decode(respObj)
-	if err != nil {
-		return gridintensity.UNKNOWN, err
-	}
-
-	if len(respObj.Data) == 0 || respObj.Data[0].Intensity == nil {
-		return gridintensity.UNKNOWN, ErrNoResponse
-	}
-
-	latestData := respObj.Data[0]
-	switch latestData.Intensity.Index {
+	switch latestData.Index {
 	case "very low", "low":
 		return gridintensity.LOW, nil
 	case "moderate":
@@ -77,7 +52,47 @@ func (a *ApiClient) GetCarbonIndex(ctx context.Context, region string) (gridinte
 	case "high", "very high":
 		return gridintensity.HIGH, nil
 	}
-	return gridintensity.UNKNOWN, errUnknownIndex(latestData.Intensity.Index)
+	return gridintensity.UNKNOWN, errUnknownIndex(latestData.Index)
+}
+
+func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
+	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
+	if err != nil {
+		return 0, err
+	}
+	return latestData.Actual, nil
+}
+
+func (a *ApiClient) getLatestCarbonIntensityData(ctx context.Context, region string) (*Intensity, error) {
+	if region != "UK" {
+		return nil, ErrOnlyUK
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", a.apiURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := a.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errBadStatus(resp)
+	}
+
+	respObj := &CarbonIntensityResponse{}
+
+	err = json.NewDecoder(resp.Body).Decode(respObj)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(respObj.Data) == 0 || respObj.Data[0].Intensity == nil {
+		return nil, ErrNoResponse
+	}
+	return respObj.Data[0].Intensity, nil
 }
 
 func (a *ApiClient) MinIntensity(ctx context.Context, regions ...string) (string, error) {
