@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
 	"github.com/thegreenwebfoundation/grid-intensity-go/energymap"
 )
 
@@ -18,9 +19,9 @@ func main() {
 	if err != nil {
 		log.Fatalln("could not make provider", err)
 	}
-	a, err := c.GetCarbonIndex(context.Background(), "IN-KA")
+	a, err := c.GetCarbonIntensity(context.Background(), "IN-KA")
 	log.Println(a, err)
 
-	lowest, err := c.MinIntensity(context.Background(), "IN-KA", "IN-AP")
-	log.Println(lowest, err)
+	carbonIntensityMap, err := gridintensity.GetCarbonIntensityMap(context.Background(), c, "IN-KA", "IN-AP")
+	log.Println(carbonIntensityMap.GetAll(), err)
 }

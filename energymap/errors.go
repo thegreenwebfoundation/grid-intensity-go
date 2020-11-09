@@ -8,9 +8,7 @@ import (
 )
 
 var (
-	ErrNoRegionProvided           = errors.New("no region was provided for comparison")
-	ErrNoRegionFound              = errors.New("no region found")
-	ErrTimeout                    = errors.New("timed out")
+	ErrNoRegionProvided           = errors.New("no region was provided")
 	ErrReceivedNon200Status error = errors.New("received non-200 status")
 )
 

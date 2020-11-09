@@ -12,6 +12,6 @@ func main() {
 	if err != nil {
 		log.Fatalln("could not make provider", err)
 	}
-	a, err := c.GetCarbonIndex(context.Background(), "UK")
+	a, err := c.GetCarbonIntensity(context.Background(), "UK")
 	log.Println(a, err)
 }

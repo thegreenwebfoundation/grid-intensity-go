@@ -38,23 +38,6 @@ type ApiClient struct {
 	apiURL string
 }
 
-func (a *ApiClient) GetCarbonIndex(ctx context.Context, region string) (gridintensity.CarbonIndex, error) {
-
-	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
-	if err != nil {
-		return gridintensity.UNKNOWN, err
-	}
-	switch latestData.Index {
-	case "very low", "low":
-		return gridintensity.LOW, nil
-	case "moderate":
-		return gridintensity.MODERATE, nil
-	case "high", "very high":
-		return gridintensity.HIGH, nil
-	}
-	return gridintensity.UNKNOWN, errUnknownIndex(latestData.Index)
-}
-
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
 	if err != nil {
@@ -93,8 +76,4 @@ func (a *ApiClient) getLatestCarbonIntensityData(ctx context.Context, region str
 		return nil, ErrNoResponse
 	}
 	return respObj.Data[0].Intensity, nil
-}
-
-func (a *ApiClient) MinIntensity(ctx context.Context, regions ...string) (string, error) {
-	return "", ErrOnlyUK
 }

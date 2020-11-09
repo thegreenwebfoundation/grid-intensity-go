@@ -50,67 +50,6 @@ type ApiClient struct {
 	high_threshold     float64
 }
 
-func (a *ApiClient) GetCarbonIndex(ctx context.Context, region string) (gridintensity.CarbonIndex, error) {
-	intensity, err := a.GetCarbonIntensity(ctx, region)
-	if err != nil {
-		return gridintensity.UNKNOWN, err
-	}
-
-	if intensity >= a.high_threshold {
-		return gridintensity.HIGH, nil
-	}
-
-	if intensity >= a.moderate_threshold {
-		return gridintensity.MODERATE, nil
-	}
-
-	return gridintensity.LOW, nil
-}
-
-func (a *ApiClient) MinIntensity(ctx context.Context, regions ...string) (string, error) {
-
-	if len(regions) == 0 {
-		return "", ErrNoRegionProvided
-	}
-
-	requestCounter := len(regions)
-
-	intensityMap := &IntensityMap{
-		m: make(map[string]float64, requestCounter),
-	}
-	errChan := make(chan error, requestCounter)
-
-	for _, region := range regions {
-		go func(r string) {
-			intensity, err := a.GetCarbonIntensity(ctx, r)
-			errChan <- err
-			if err != nil {
-				return
-			}
-			intensityMap.Set(r, intensity)
-		}(region)
-	}
-
-	for {
-		select {
-		case err := <-errChan:
-			if err != nil {
-				return "", err
-			}
-			requestCounter--
-			if requestCounter == 0 {
-				r, err := intensityMap.Min()
-				if err != nil {
-					return "", err
-				}
-				return r, nil
-			}
-		case <-ctx.Done():
-			return "", ErrTimeout
-		}
-	}
-}
-
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", a.intensityURLWithZone(region), nil)
 	if err != nil {

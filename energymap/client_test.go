@@ -13,6 +13,11 @@ import (
 	"github.com/thegreenwebfoundation/grid-intensity-go/energymap"
 )
 
+var responseTable = map[string]float64{
+	"IN-KA": 312,
+	"IN-AP": 301,
+}
+
 var MockResponses = map[string]string{
 	"IN-KA": `{
 		"zone": "IN-KA",
@@ -52,14 +57,14 @@ func TestSimpleRequest(t *testing.T) {
 		return
 	}
 
-	resp, err := e.GetCarbonIndex(context.Background(), "IN-KA")
+	resp, err := e.GetCarbonIntensity(context.Background(), "IN-KA")
 	if err != nil {
 		t.Errorf("Got error on GetCarbonIndex: %s", err)
 		return
 	}
 
-	if resp != gridintensity.HIGH {
-		t.Errorf("Expected HIGH, got %s", resp)
+	if resp != 312 {
+		t.Errorf("Expected HIGH, got %.2f", resp)
 	}
 }
 
@@ -73,13 +78,22 @@ func TestMinIntensity(t *testing.T) {
 		return
 	}
 
-	resp, err := e.MinIntensity(context.Background(), "IN-KA", "IN-AP")
+	resp, err := gridintensity.GetCarbonIntensityMap(context.Background(), e, "IN-KA", "IN-AP")
 	if err != nil {
 		t.Errorf("Got error on GetCarbonIndex: %s", err)
 		return
 	}
+	carbonIntensityMap := resp.GetAll()
 
-	if resp != "IN-AP" {
-		t.Errorf("Expected IN-AP, got %s", resp)
+	for region, value := range responseTable {
+		if _, ok := carbonIntensityMap[region]; !ok {
+			t.Errorf("Expected to find %s in the map", region)
+			return
+		}
+		if carbonIntensityMap[region] != value {
+			t.Errorf("Expected region %s to have %.2f gco2e/kwh intensity, got %.2f", region, value, carbonIntensityMap[region])
+			return
+		}
 	}
+
 }

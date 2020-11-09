@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
 	"github.com/thegreenwebfoundation/grid-intensity-go/carbonintensity"
 )
 
@@ -37,13 +36,13 @@ func TestSimpleRequest(t *testing.T) {
 		return
 	}
 
-	resp, err := c.GetCarbonIndex(context.Background(), "UK")
+	resp, err := c.GetCarbonIntensity(context.Background(), "UK")
 	if err != nil {
 		t.Errorf("Got error on GetCarbonIndex: %s", err)
 		return
 	}
 
-	if resp != gridintensity.MODERATE {
-		t.Errorf("Expected MODERATE, got %s", resp)
+	if resp != 190 {
+		t.Errorf("Expected 190, got %.2f", resp)
 	}
 }

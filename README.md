@@ -1,4 +1,5 @@
 # grid-intensity-go
+
 A tool written in go, designed to be integrated into kubernetes, nomad, and other schedulers, to help you factor carbon intensity into decisions about where and when to run jobs.
 
 ## Background
@@ -14,12 +15,12 @@ Because the fuel mix will be different depending when and where you run your cod
 ## Installation
 
 If you're on a mac you can install with homebrew/
+
 ```
 brew install tgwf/grid-nntensity
 ```
 
 Othewise you can download the binary from the releases tab here,for your architecture.
-
 
 ## How to use it
 
