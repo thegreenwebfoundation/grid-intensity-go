@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ErrNoRegionProvided           = errors.New("no region was provided")
+	ErrNoRegionProvided          error = errors.New("no region was provided")
 	ErrReceivedNon200Status error = errors.New("received non-200 status")
 )
 
