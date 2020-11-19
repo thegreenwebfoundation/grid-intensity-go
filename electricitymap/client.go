@@ -1,4 +1,4 @@
-package energymap
+package electricitymap
 
 import (
 	"context"
@@ -32,22 +32,13 @@ func New(token string, opts ...ApiOption) (gridintensity.Provider, error) {
 	}
 	a.token = token
 
-	if a.moderate_threshold == 0.0 {
-		a.moderate_threshold = 150.0
-	}
-	if a.high_threshold == 0.0 {
-		a.high_threshold = 300.0
-	}
-
 	return a, nil
 }
 
 type ApiClient struct {
-	client             *http.Client
-	apiURL             string
-	token              string
-	moderate_threshold float64
-	high_threshold     float64
+	client *http.Client
+	apiURL string
+	token  string
 }
 
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {

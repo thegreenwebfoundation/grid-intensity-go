@@ -1,4 +1,4 @@
-package energymap
+package electricitymap
 
 type CarbonIntensityResp struct {
 	Zone            string  `json:"zone"`

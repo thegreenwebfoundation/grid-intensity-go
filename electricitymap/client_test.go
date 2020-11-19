@@ -1,4 +1,4 @@
-package energymap_test
+package electricitymap_test
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"time"
 
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
-	"github.com/thegreenwebfoundation/grid-intensity-go/energymap"
+	"github.com/thegreenwebfoundation/grid-intensity-go/electricitymap"
 )
 
 var responseTable = map[string]float64{
@@ -51,7 +51,7 @@ func TestSimpleRequest(t *testing.T) {
 	ts := makeTestServer()
 	defer ts.Close()
 
-	e, err := energymap.New("fake_token", energymap.WithAPIURL(ts.URL))
+	e, err := electricitymap.New("fake_token", electricitymap.WithAPIURL(ts.URL))
 	if err != nil {
 		t.Errorf("Could not make provider: %s", err)
 		return
@@ -72,7 +72,7 @@ func TestMinIntensity(t *testing.T) {
 	ts := makeTestServer()
 	defer ts.Close()
 
-	e, err := energymap.New("fake_token", energymap.WithAPIURL(ts.URL))
+	e, err := electricitymap.New("fake_token", electricitymap.WithAPIURL(ts.URL))
 	if err != nil {
 		t.Errorf("Could not make provider: %s", err)
 		return

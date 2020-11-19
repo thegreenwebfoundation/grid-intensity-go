@@ -6,16 +6,16 @@ import (
 	"os"
 
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
-	"github.com/thegreenwebfoundation/grid-intensity-go/energymap"
+	"github.com/thegreenwebfoundation/grid-intensity-go/electricitymap"
 )
 
 func main() {
-	token := os.Getenv("ENERGY_MAP_API_TOKEN")
+	token := os.Getenv("ELECTRICITY_MAP_API_TOKEN")
 	if token == "" {
-		log.Fatalln("please set the env variable `ENERGY_MAP_API_TOKEN`")
+		log.Fatalln("please set the env variable `ELECTRICITY_MAP_API_TOKEN`")
 	}
 
-	c, err := energymap.New(token)
+	c, err := electricitymap.New(token)
 	if err != nil {
 		log.Fatalln("could not make provider", err)
 	}
