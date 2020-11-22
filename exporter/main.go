@@ -21,7 +21,7 @@ const (
 var (
 	actualDesc = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "carbon", "actual"),
-		"Actual carbon intensity for this region.",
+		"Actual carbon intensity for the electricity grid in this region.",
 		[]string{
 			labelProvider,
 			labelRegion,
