@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/thegreenwebfoundation/grid-intensity-go?status.svg)](http://godoc.org/github.com/thegreenwebfoundation/grid-intensity-go) ![go-unit-test](https://github.com/thegreenwebfoundation/grid-intensity-go/workflows/go-unit-test/badge.svg)
+
 # grid-intensity-go
 
 A tool written in go, designed to be integrated into kubernetes, nomad, and other schedulers, to help you factor carbon intensity into decisions about where and when to run jobs.
