@@ -1,0 +1,14 @@
+{
+    "de": {
+        "region": "de",
+        "carbonIntensity": 312
+    },
+    "eu": {
+        "region": "eu",
+        "carbonIntensity": 260
+    },
+    "global": {
+        "region": "global",
+        "carbonIntensity": 440
+    }
+}

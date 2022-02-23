@@ -15,13 +15,13 @@ var responseTable = map[string]float64{
 // sample intensity for Germany
 func TestFetchIntensity(t *testing.T) {
 
-	u, err := unfccc.New()
+	u, err := unfccc.New("sampleRegionData.json")
 	if err != nil {
 		t.Errorf("Could not make provider: %s", err)
 		return
 	}
 
-	resp, err := u.GetCarbonIntensity(context.Background(), "DE")
+	resp, err := u.GetCarbonIntensity(context.Background(), "de")
 
 	if resp != 312 {
 		t.Errorf("Expected 312, got %.2f", resp)
