@@ -4,6 +4,10 @@
 
 A tool written in go, designed to be integrated into kubernetes, nomad, and other schedulers, to help you factor carbon intensity into decisions about where and when to run jobs.
 
+
+## Usage
+
+
 ## Background
 
 We know that the internet runs on electricity. That electricity comes from a mix of energy sources, including wind and solar, nuclear power, biomass, fossil gas, oil and coal and so on,
