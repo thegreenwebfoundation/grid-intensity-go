@@ -14,7 +14,7 @@ func New(opts ...ApiOption) (gridintensity.Provider, error) {
 
 	a := &ApiClient{}
 
-	// load JSON file
+	// figure out how to load JSON file
 
 	// populate our map with the intensities
 
@@ -27,14 +27,11 @@ type ApiClient struct {
 }
 
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
-	var ok bool
 
-	intensity, ok := a.regionMap[region]; ok
-
-	if ok == false {
-		return (intensity, nil)
+	if intensity, ok := a.regionMap[region]; ok {
+		return intensity, nil
 	}
 
-	return (0, ErrNoMatchingRegion)
+	return 0, ErrNoMatchingRegion
 
 }
