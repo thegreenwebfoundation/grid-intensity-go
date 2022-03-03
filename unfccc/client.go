@@ -29,10 +29,17 @@ func New(pathtoJSONFile string) (gridintensity.Provider, error) {
 
 	// figure out how to load JSON file
 	regionJSON, err := os.ReadFile(pathtoJSONFile)
-	check(err)
+	if err != nil {
+		panic(err)
+	}
 
 	// populate our map with the intensities
-	json.Unmarshal(regionJSON, a.regionMap)
+	err = json.Unmarshal(regionJSON, &regionMap)
+	if err != nil {
+		panic(err)
+	}
+
+	a.regionMap = regionMap
 
 	fmt.Println(regionMap)
 
@@ -43,7 +50,7 @@ func New(pathtoJSONFile string) (gridintensity.Provider, error) {
 
 type ApiClient struct {
 	sourceFilePath string
-	regionMap      map[string]float64
+	regionMap      map[string]CarbonIntensityReading
 }
 
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
@@ -51,7 +58,7 @@ func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (floa
 	fmt.Println(a.regionMap)
 
 	if intensity, ok := a.regionMap[region]; ok {
-		return intensity, nil
+		return intensity.CarbonIntensity, nil
 	}
 
 	return 0, ErrNoMatchingRegion
