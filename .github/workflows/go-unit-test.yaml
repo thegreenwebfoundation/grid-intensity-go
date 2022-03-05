@@ -2,7 +2,7 @@ name: go-unit-test
 on: [push]
 jobs:
   go-unit-test:
-    runs-on: ubuntu-21.10
+    runs-on: ubuntu-latest
     steps:
       - 
         name: Checkout code
