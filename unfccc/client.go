@@ -3,7 +3,7 @@ package unfccc
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
 )
@@ -17,7 +17,7 @@ func New(pathtoJSONFile string) (gridintensity.Provider, error) {
 	var regionMap map[string]CarbonIntensityReading
 
 	var regionJSON []byte
-	regionJSON, err := ioutil.ReadFile(pathtoJSONFile)
+	regionJSON, err := os.ReadFile(pathtoJSONFile)
 	if err != nil {
 		return nil, err
 	}
