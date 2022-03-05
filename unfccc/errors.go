@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	ErrNoMatchingRegion error = errors.New("No region matched that region code")
+	ErrNoMatchingRegion error = errors.New("no region matched that region code")
 )
