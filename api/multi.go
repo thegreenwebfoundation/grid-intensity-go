@@ -1,4 +1,4 @@
-package gridintensity
+package api
 
 import (
 	"context"
