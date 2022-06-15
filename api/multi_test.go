@@ -1,11 +1,11 @@
-package gridintensity_test
+package api_test
 
 import (
 	"context"
 	"errors"
 	"testing"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
+	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
 var responseTable = map[string]float64{

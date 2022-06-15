@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
+	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 	"github.com/thegreenwebfoundation/grid-intensity-go/electricitymap"
 )
 

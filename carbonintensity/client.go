@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go"
+	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
 type ApiOption func(*ApiClient) error
