@@ -1,0 +1,36 @@
+project_name: grid-intensity
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+brews:
+  - tap:
+      owner: thegreenwebfoundation
+      name: homebrew-grid-intensity
+      token: {{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}
+    homepage: https://github.com/thegreenwebfoundation/grid-intensity-go
+    description: Get carbon intensity data for electricity grids
+    license: 	Apache-2.0
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
