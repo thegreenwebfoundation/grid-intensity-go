@@ -1,6 +1,6 @@
 module github.com/thegreenwebfoundation/grid-intensity-go
 
-go 1.18
+go 1.17
 
 require (
 	github.com/Xuanwo/go-locale v1.1.0
