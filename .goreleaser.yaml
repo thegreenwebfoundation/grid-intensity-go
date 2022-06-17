@@ -20,7 +20,7 @@ brews:
   - tap:
       owner: thegreenwebfoundation
       name: homebrew-grid-intensity
-      token: {{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: https://github.com/thegreenwebfoundation/grid-intensity-go
     description: Get carbon intensity data for electricity grids
     license: 	Apache-2.0
