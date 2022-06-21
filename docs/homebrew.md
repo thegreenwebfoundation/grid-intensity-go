@@ -16,23 +16,23 @@ installation token that can write to this repo.
 - The GitHub App is named `Grid Intensity App O Tron` and can be found in
 the settings of the `thegreenwebfoundation` organization.
 
-![GitHub App]](github_app.png)
+![GitHub App](github_app.png)
 
 - By default installation tokens expire after 8 hours. So we need to opt out of
 this setting via Optional Features.
 
-![GitHub App optional features]](github_app_optional_features.png)
+![GitHub App optional features](github_app_optional_features.png)
 
 - To create the installation token we need to create a [private key](https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps)
 for the app. (This can be found in 1 Password).
 
-![GitHub App private key]](github_app_private_key.png)
+![GitHub App private key](github_app_private_key.png)
 
 - The app needs to be installed in the `thegreenwebfoundation` org for just the
 `grid-intensity-go` repository.
 
-![GitHub App installation]](github_app_install.png)
-![GitHub App installation for repo]](github_app_install_repo.png)
+![GitHub App installation](github_app_install.png)
+![GitHub App installation for repo](github_app_install_repo.png)
 
 - Create a JWT token using the linked Ruby script with the private key.
 https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps#authenticating-as-a-github-app
@@ -62,4 +62,4 @@ curl \
 - Add the token as a secret named `HOMEBREW_TAP_GITHUB_TOKEN` in the
 `grid-intensity-go` repo.
 
-![GitHub secret with token]](github_repo_secret.png)
+![GitHub secret with token](github_repo_secret.png)
