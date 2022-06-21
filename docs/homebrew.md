@@ -19,7 +19,7 @@ the settings of the `thegreenwebfoundation` organization.
 ![GitHub App](github_app.png)
 
 - By default installation tokens expire after 8 hours. So we need to opt out of
-this setting via Optional Features.
+this setting via [Optional Features](https://docs.github.com/en/developers/apps/getting-started-with-apps/activating-optional-features-for-apps).
 
 ![GitHub App optional features](github_app_optional_features.png)
 
@@ -34,7 +34,8 @@ for the app. (This can be found in 1 Password).
 ![GitHub App installation](github_app_install.png)
 ![GitHub App installation for repo](github_app_install_repo.png)
 
-- Create a JWT token using the linked Ruby script with the private key.
+- Authenticate as the GitHub App using the private key and create a JWT token
+using the Ruby script on this page. 
 https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps#authenticating-as-a-github-app
 
 - Get the installation ID for the app for the grid-intensity-go repo.
@@ -48,7 +49,7 @@ https://docs.github.com/en/developers/apps/building-github-apps/authenticating-w
 26614624
 ```
 
-- Create an installation token that can write to `grid-intensity-go`.
+- Create an installation token that can write to the `grid-intensity-go` repo.
 
 ```
 curl \
