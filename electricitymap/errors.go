@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrNoRegionProvided           = errors.New("no region was provided")
+	ErrNotSupported         error = errors.New("method not supported")
 	ErrReceivedNon200Status error = errors.New("received non-200 status")
 )
 

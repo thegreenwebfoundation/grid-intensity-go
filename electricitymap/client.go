@@ -41,6 +41,10 @@ type ApiClient struct {
 	token  string
 }
 
+func (a *ApiClient) GetAllRegionsCarbonIntensity(ctx context.Context) (map[string]float64, error) {
+	return nil, ErrNotSupported
+}
+
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", a.intensityURLWithZone(region), nil)
 	if err != nil {

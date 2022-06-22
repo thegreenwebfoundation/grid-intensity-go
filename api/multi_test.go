@@ -16,6 +16,10 @@ var responseTable = map[string]float64{
 type MockProvider struct {
 }
 
+func (m *MockProvider) GetAllRegionsCarbonIntensity(ctx context.Context) (map[string]float64, error) {
+	return nil, nil
+}
+
 func (m *MockProvider) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	if val, ok := responseTable[region]; ok {
 		return val, nil

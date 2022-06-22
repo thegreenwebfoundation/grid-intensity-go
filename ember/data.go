@@ -28,6 +28,16 @@ func New() (gridintensity.Provider, error) {
 	return &ApiClient{data: emberData}, nil
 }
 
+func (a *ApiClient) GetAllRegionsCarbonIntensity(ctx context.Context) (map[string]float64, error) {
+	results := map[string]float64{}
+
+	for region, data := range a.data {
+		results[region] = data.EmissionsIntensityGCO2PerKWH
+	}
+
+	return results, nil
+}
+
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	result, ok := a.data[strings.ToUpper(region)]
 	if !ok {

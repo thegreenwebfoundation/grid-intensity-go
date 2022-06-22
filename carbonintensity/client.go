@@ -38,6 +38,18 @@ type ApiClient struct {
 	apiURL string
 }
 
+func (a *ApiClient) GetAllRegionsCarbonIntensity(ctx context.Context) (map[string]float64, error) {
+	// UK is the only supported region for this provider.
+	region := "UK"
+	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
+	if err != nil {
+		return nil, err
+	}
+	return map[string]float64{
+		region: latestData.Actual,
+	}, nil
+}
+
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
 	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
 	if err != nil {
