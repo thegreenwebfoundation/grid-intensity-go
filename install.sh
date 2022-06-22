@@ -16,7 +16,7 @@ if [ $# -eq 0 ]; then
     version="$(curl -s https://api.github.com/repos/thegreenwebfoundation/grid-intensity-go/releases/latest | grep tag_name | cut -d '"' -f 4)"
 fi
 
-version="$(echo $version | cut -d 'v' -f 2)"
+version="$(echo "$version" | cut -d 'v' -f 2)"
 grid_intensity_uri="https://github.com/thegreenwebfoundation/grid-intensity-go/releases/download/v${version}/grid-intensity_${version}_${target}.tar.gz"
 
 bin_dir="/usr/local/bin"
