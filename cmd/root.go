@@ -9,7 +9,7 @@ import (
 	"github.com/Xuanwo/go-locale"
 	"github.com/spf13/cobra"
 
-	"github.com/thegreenwebfoundation/grid-intensity-go/data"
+	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
 )
 
 const (
@@ -64,7 +64,7 @@ func getGridIntensityForCountry(countryCode string) error {
 		countryCode = region.ISO3()
 	}
 
-	result, err := data.GetGridIntensityForCountry(countryCode)
+	result, err := ember.GetGridIntensityForCountry(countryCode)
 	if err != nil {
 		return err
 	}
