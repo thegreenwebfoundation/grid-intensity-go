@@ -1,7 +1,8 @@
 package ember
 
 type GridIntensity struct {
-	CountryCode                  string  `json:"country_code"`
+	CountryCodeISO2              string  `json:"country_code_iso_2"`
+	CountryCodeISO3              string  `json:"country_code_iso_3"`
 	CountryOrRegion              string  `json:"country_or_region"`
 	Year                         int     `json:"year"`
 	LatestYear                   int     `json:"latest_year"`
