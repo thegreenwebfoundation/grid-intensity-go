@@ -1,4 +1,4 @@
-package data
+package ember
 
 import (
 	"reflect"
@@ -16,7 +16,20 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 			name:        "country exists",
 			countryCode: "ESP",
 			result: &GridIntensity{
-				CountryCode:                  "ESP",
+				CountryCodeISO2:              "ES",
+				CountryCodeISO3:              "ESP",
+				CountryOrRegion:              "Spain",
+				Year:                         2021,
+				LatestYear:                   2021,
+				EmissionsIntensityGCO2PerKWH: 193.737,
+			},
+		},
+		{
+			name:        "2 char country code",
+			countryCode: "ES",
+			result: &GridIntensity{
+				CountryCodeISO2:              "ES",
+				CountryCodeISO3:              "ESP",
 				CountryOrRegion:              "Spain",
 				Year:                         2021,
 				LatestYear:                   2021,
@@ -27,7 +40,8 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 			name:        "lower case country code",
 			countryCode: "gbr",
 			result: &GridIntensity{
-				CountryCode:                  "GBR",
+				CountryCodeISO2:              "GB",
+				CountryCodeISO3:              "GBR",
 				CountryOrRegion:              "United Kingdom",
 				Year:                         2021,
 				LatestYear:                   2021,
