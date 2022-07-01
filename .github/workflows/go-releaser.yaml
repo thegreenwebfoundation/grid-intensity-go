@@ -20,8 +20,8 @@ jobs:
         id: get_token
         uses: getsentry/action-github-app-token@main
         with:
-          APP_PEM: ${{ secrets.HOMEBREW_TAP_GITHUB_APP_PEM }}
-          APP_ID: ${{ secrets.HOMEBREW_TAP_GITHUB_APP_ID }}
+          app_id: ${{ secrets.HOMEBREW_TAP_GITHUB_APP_ID }}
+          private_key: ${{ secrets.HOMEBREW_TAP_GITHUB_APP_PEM }}
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
