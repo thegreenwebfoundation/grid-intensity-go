@@ -4,12 +4,15 @@ The homebrew tap is located at https://github.com/thegreenwebfoundation/homebrew
 
 ## Permissions
 
-The GoReleaser GitHub Action uses the secret `HOMEBREW_TAP_GITHUB_TOKEN` to
-authenticate with the GitHub API when publishing to the 
+The GoReleaser GitHub Action uses the secrets `HOMEBREW_TAP_GITHUB_APP_ID` and
+`HOMEBREW_TAP_GITHUB_APP_PEM` to generate an installation token which
+expires after 1 hour.
+
+This is used to authenticate with the GitHub API when publishing to the 
 `homebrew-carbon-aware-tools` repo.
 
-To restrict access to just this repo a GitHub App has been created with an
-installation token that can write to this repo.
+To restrict access to just this repo a GitHub App has been created that can
+write to this repo.
 
 ## Setup
 
@@ -17,11 +20,6 @@ installation token that can write to this repo.
 the settings of the `thegreenwebfoundation` organization.
 
 ![GitHub App](github_app.png)
-
-- By default installation tokens expire after 8 hours. So we need to opt out of
-this setting via [Optional Features](https://docs.github.com/en/developers/apps/getting-started-with-apps/activating-optional-features-for-apps).
-
-![GitHub App optional features](github_app_optional_features.png)
 
 - To create the installation token we need to create a [private key](https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps)
 for the app. (This can be found in 1 Password).
@@ -49,18 +47,13 @@ https://docs.github.com/en/developers/apps/building-github-apps/authenticating-w
 26614624
 ```
 
-- Create an installation token that can write to the `grid-intensity-go` repo.
-
-```
-curl \
-  -X POST \
-  -H "Accept: application/vnd.github.v3+json" \
-  -H "Authorization: Bearer ***JWT TOKEN***
-  https://api.github.com/app/installations/26614624/access_tokens \
-  -d '{"repository":"homebrew-carbon-aware-tools","permissions":{"contents":"write"}}'
-```
-
-- Add the token as a secret named `HOMEBREW_TAP_GITHUB_TOKEN` in the
-`grid-intensity-go` repo.
+- Add a secret named `HOMEBREW_TAP_GITHUB_APP_ID` with the installation ID above.
 
 ![GitHub secret with token](github_repo_secret.png)
+
+- Add a secret named `HOMEBREW_TAP_GITHUB_APP_PEM` with the base 64 encoded
+private key.
+
+```
+base64 private-key.pem
+```

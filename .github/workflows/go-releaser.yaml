@@ -16,6 +16,13 @@ jobs:
         name: Set up Go
         uses: actions/setup-go@v3
       -
+        name: Get token
+        id: get_token
+        uses: getsentry/action-github-app-token@main
+        with:
+          APP_PEM: ${{ secrets.HOMEBREW_TAP_GITHUB_APP_PEM }}
+          APP_ID: ${{ secrets.HOMEBREW_TAP_GITHUB_APP_ID }}
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
@@ -24,4 +31,4 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ steps.get_token.outputs.token }}
