@@ -32,28 +32,11 @@ for the app. (This can be found in 1 Password).
 ![GitHub App installation](github_app_install.png)
 ![GitHub App installation for repo](github_app_install_repo.png)
 
-- Authenticate as the GitHub App using the private key and create a JWT token
-using the Ruby script on this page. 
-https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps#authenticating-as-a-github-app
+- Add a secret named `HOMEBREW_TAP_GITHUB_APP_ID` with the app ID.
 
-- Get the installation ID for the app for the grid-intensity-go repo.
+![GitHub App](github_app_id.png)
 
-```
- curl \
-  -H "Accept: application/vnd.github.v3+json" \
-  -H "Authorization: Bearer ***JWT TOKEN***" \
-  -s https://api.github.com/app/installations | jq '.[0].id'
-
-26614624
-```
-
-- Add a secret named `HOMEBREW_TAP_GITHUB_APP_ID` with the installation ID above.
+- Add a secret named `HOMEBREW_TAP_GITHUB_APP_PEM` with the full contents of the
+private key file. Note: This file should NOT be base64 encoded.
 
 ![GitHub secret with token](github_repo_secret.png)
-
-- Add a secret named `HOMEBREW_TAP_GITHUB_APP_PEM` with the base 64 encoded
-private key.
-
-```
-base64 private-key.pem
-```
