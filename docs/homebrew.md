@@ -57,5 +57,3 @@ private key.
 ```
 base64 private-key.pem
 ```
-
-https://dev.to/dtinth/authenticating-as-a-github-app-in-a-github-actions-workflow-27co
