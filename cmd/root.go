@@ -20,7 +20,8 @@ import (
 const (
 	configDir      = ".config/grid-intensity"
 	configFileName = "config.yaml"
-	countryCode    = "country-code"
+	provider       = "provider"
+	region         = "region"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -32,8 +33,8 @@ var rootCmd = &cobra.Command{
 This can be used to make your sofware carbon aware so it runs at times when the
 grid is greener or at locations where carbon intensity is lower.
 
-	grid-intensity --country-code ARG
-	grid-intensity -c BOL`,
+	grid-intensity --region ARG
+	grid-intensity -r BOL`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		err := runWithError()
@@ -51,11 +52,14 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP(countryCode, "c", "", "Country code in ISO 3 character format")
-	viper.BindPFlag(countryCode, rootCmd.Flags().Lookup(countryCode))
+	rootCmd.Flags().StringP(provider, "p", ember.Provider, "Provider of carbon intensity data")
+	rootCmd.Flags().StringP(region, "r", "", "Region code for provider")
+
+	viper.BindPFlag(provider, rootCmd.Flags().Lookup(provider))
+	viper.BindPFlag(region, rootCmd.Flags().Lookup(region))
 }
 
-func getGridIntensityForCountry(countryCode string) error {
+func getEmberGridIntensityForCountry(countryCode string) error {
 	result, err := ember.GetGridIntensityForCountry(countryCode)
 	if err != nil {
 		return err
@@ -121,23 +125,26 @@ func runWithError() error {
 		return err
 	}
 
-	country := viper.GetString(countryCode)
-	if err != nil {
-		return err
-	}
+	providerName := viper.GetString(provider)
+	regionCode := viper.GetString(region)
 
-	if country == "" {
-		country, err = getCountryCode()
+	switch providerName {
+	case ember.Provider:
+		if regionCode == "" {
+			regionCode, err = getCountryCode()
+			if err != nil {
+				return err
+			}
+
+			viper.Set(region, regionCode)
+		}
+
+		err = getEmberGridIntensityForCountry(regionCode)
 		if err != nil {
 			return err
 		}
-
-		viper.Set(countryCode, country)
-	}
-
-	err = getGridIntensityForCountry(country)
-	if err != nil {
-		return err
+	default:
+		return fmt.Errorf("provider %q not recognized", providerName)
 	}
 
 	err = viper.WriteConfig()
