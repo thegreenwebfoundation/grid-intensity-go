@@ -122,10 +122,6 @@ func runWithError() error {
 	}
 
 	country := viper.GetString(countryCode)
-	if err != nil {
-		return err
-	}
-
 	if country == "" {
 		country, err = getCountryCode()
 		if err != nil {
