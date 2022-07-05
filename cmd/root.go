@@ -18,8 +18,9 @@ import (
 )
 
 const (
-	configFileLocation = ".config/grid-intensity/config.yaml"
-	countryCode        = "country-code"
+	configDir      = ".config/grid-intensity"
+	configFileName = "config.yaml"
+	countryCode    = "country-code"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -100,11 +101,17 @@ func runWithError() error {
 		return nil
 	}
 
-	configFile := filepath.Join(homeDir, configFileLocation)
+	configFile := filepath.Join(homeDir, configDir, configFileName)
 	viper.SetConfigFile(configFile)
 
 	err = viper.ReadInConfig()
 	if _, ok := err.(*fs.PathError); ok {
+		// Create config dir if it doesn't exist.
+		err = os.Mkdir(filepath.Join(homeDir, configDir), os.ModePerm)
+		if err != nil {
+			return err
+		}
+
 		// Create config file if it doesn't exist.
 		_, err = os.Create(configFile)
 		if err != nil {
