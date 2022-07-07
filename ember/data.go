@@ -15,6 +15,8 @@ import (
 //go:embed co2-intensities-ember-2021.csv
 var emberData []byte
 
+const Provider = "ember-climate.org"
+
 type ApiClient struct {
 	data map[string]GridIntensity
 }
