@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
 	Short: "Get carbon intensity data for electricity grids",
 	Long: `A tool for getting the carbon intensity data for electricity grids.
 
-This can be used to make your sofware carbon aware so it runs at times when the
+This can be used to make your software carbon aware so it runs at times when the
 grid is greener or at locations where carbon intensity is lower.
 
 	grid-intensity --region ARG
