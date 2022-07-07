@@ -21,6 +21,13 @@ func New(user, password string, opts ...ApiOption) (Provider, error) {
 		password: password,
 	}
 
+	for _, opt := range opts {
+		err := opt(a)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if a.client == nil {
 		a.client = &http.Client{
 			Timeout: 5 * time.Second,
