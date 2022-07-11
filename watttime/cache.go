@@ -123,7 +123,8 @@ func (a *ApiClient) setCacheData(ctx context.Context, region string, result *Ind
 	if ttl.Before(time.Now()) {
 		// The TTL calculated from the point time is in the past. So reset the
 		// TTL using the current time plus the frequency provided by the API.
-		ttl = time.Now().Add(time.Duration(freq) * time.Second)
+		// UTC is used to match the WattTime API.
+		ttl = time.Now().UTC().Add(time.Duration(freq) * time.Second)
 	}
 	item := &CacheData{
 		Data: result,
