@@ -40,6 +40,9 @@ func New(user, password string, opts ...ApiOption) (Provider, error) {
 	if a.apiURL == "" {
 		a.apiURL = "https://api2.watttime.org/v2"
 	}
+	if a.cacheFile != "" {
+		a.lockFile = a.cacheFile + ".lock"
+	}
 
 	return a, nil
 }
@@ -50,6 +53,7 @@ type ApiClient struct {
 
 	apiURL    string
 	cacheFile string
+	lockFile  string
 	user      string
 	password  string
 	token     string

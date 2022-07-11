@@ -64,13 +64,12 @@ func (a *ApiClient) loadCache(ctx context.Context) (map[string]*CacheData, error
 		return nil, err
 	}
 
-	lockPath := a.cacheFile + ".lock"
-	fileLock := flock.New(lockPath)
-
 	lockCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	locked, err := fileLock.TryLockContext(lockCtx, time.Second)
+	// Get a shared file lock for reading.
+	fileLock := flock.New(a.lockFile)
+	locked, err := fileLock.TryRLockContext(lockCtx, time.Second)
 	if err == nil && locked {
 		defer fileLock.Unlock()
 	}
@@ -101,6 +100,19 @@ func (a *ApiClient) saveCache(ctx context.Context, region string, item *CacheDat
 	cache[region] = item
 
 	data, err := json.Marshal(cache)
+	if err != nil {
+		return err
+	}
+
+	lockCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	// Get an exclusive file lock for writing.
+	fileLock := flock.New(a.lockFile)
+	locked, err := fileLock.TryLockContext(lockCtx, time.Second)
+	if err == nil && locked {
+		defer fileLock.Unlock()
+	}
 	if err != nil {
 		return err
 	}
