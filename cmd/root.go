@@ -20,7 +20,8 @@ import (
 )
 
 const (
-	cacheFileName          = "cache.json"
+	cacheDir               = ".cache/grid-intensity"
+	cacheFileName          = "watttime.org.json"
 	configDir              = ".config/grid-intensity"
 	configFileName         = "config.yaml"
 	provider               = "provider"
@@ -95,7 +96,7 @@ func getWattTimeGridIntensity(ctx context.Context, region string) error {
 		return nil
 	}
 
-	cacheFile := filepath.Join(homeDir, configDir, cacheFileName)
+	cacheFile := filepath.Join(homeDir, cacheDir, cacheFileName)
 	c, err := watttime.New(user, password, watttime.WithCacheFile(cacheFile))
 	if err != nil {
 		return fmt.Errorf("could not make provider %v", err)
