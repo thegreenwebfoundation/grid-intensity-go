@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/jellydator/ttlcache/v2"
 )
 
 const ProviderName = "watttime.org"
@@ -17,6 +19,7 @@ type ApiOption func(*ApiClient) error
 
 func New(user, password string, opts ...ApiOption) (Provider, error) {
 	a := &ApiClient{
+		cache:    ttlcache.NewCache(),
 		user:     user,
 		password: password,
 	}
@@ -37,16 +40,23 @@ func New(user, password string, opts ...ApiOption) (Provider, error) {
 	if a.apiURL == "" {
 		a.apiURL = "https://api2.watttime.org/v2"
 	}
+	if a.cacheFile != "" {
+		a.lockFile = a.cacheFile + ".lock"
+	}
 
 	return a, nil
 }
 
 type ApiClient struct {
-	client   *http.Client
-	apiURL   string
-	user     string
-	password string
-	token    string
+	cache  *ttlcache.Cache
+	client *http.Client
+
+	apiURL    string
+	cacheFile string
+	lockFile  string
+	user      string
+	password  string
+	token     string
 }
 
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
@@ -92,6 +102,14 @@ func (a *ApiClient) GetRelativeCarbonIntensity(ctx context.Context, region strin
 }
 
 func (a *ApiClient) fetchCarbonIntensityData(ctx context.Context, region string) (*IndexData, error) {
+	item, err := a.getCacheData(ctx, region)
+	if err != nil {
+		return nil, err
+	}
+	if item != nil {
+		return item, nil
+	}
+
 	if a.token == "" {
 		token, err := a.getAccessToken(ctx)
 		if err != nil {
@@ -113,6 +131,11 @@ func (a *ApiClient) fetchCarbonIntensityData(ctx context.Context, region string)
 			return nil, err
 		}
 	} else if err != nil {
+		return nil, err
+	}
+
+	err = a.setCacheData(ctx, region, result)
+	if err != nil {
 		return nil, err
 	}
 

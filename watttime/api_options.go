@@ -15,3 +15,10 @@ func WithAPIURL(url string) ApiOption {
 		return nil
 	}
 }
+
+func WithCacheFile(cacheFile string) ApiOption {
+	return func(a *ApiClient) error {
+		a.cacheFile = cacheFile
+		return nil
+	}
+}

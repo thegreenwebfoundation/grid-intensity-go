@@ -11,6 +11,11 @@ type Provider interface {
 	GetRelativeCarbonIntensity(ctx context.Context, region string) (int64, error)
 }
 
+type CacheData struct {
+	Data *IndexData `json:"data"`
+	TTL  time.Time  `json:"ttl"`
+}
+
 type IndexData struct {
 	BA        string    `json:"ba"`
 	Freq      string    `json:"freq"`
