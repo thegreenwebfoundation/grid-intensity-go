@@ -5,15 +5,13 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
 const ProviderName = "carbonintensity.org.uk"
 
 type ApiOption func(*ApiClient) error
 
-func New(opts ...ApiOption) (gridintensity.Provider, error) {
+func New(opts ...ApiOption) (*ApiClient, error) {
 	a := &ApiClient{}
 	for _, opt := range opts {
 		err := opt(a)
@@ -41,14 +39,25 @@ type ApiClient struct {
 }
 
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
-	latestData, err := a.getLatestCarbonIntensityData(ctx, region)
+	data, err := a.getCarbonIntensityData(ctx, region)
 	if err != nil {
 		return 0, err
 	}
-	return latestData.Actual, nil
+	if data.Intensity == nil {
+		return 0, ErrNoResponse
+	}
+	return data.Intensity.Actual, nil
 }
 
-func (a *ApiClient) getLatestCarbonIntensityData(ctx context.Context, region string) (*Intensity, error) {
+func (a *ApiClient) GetCarbonIntensityData(ctx context.Context, region string) (*IntensityData, error) {
+	data, err := a.getCarbonIntensityData(ctx, region)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func (a *ApiClient) getCarbonIntensityData(ctx context.Context, region string) (*IntensityData, error) {
 	if region != "UK" {
 		return nil, ErrOnlyUK
 	}
@@ -74,8 +83,8 @@ func (a *ApiClient) getLatestCarbonIntensityData(ctx context.Context, region str
 		return nil, err
 	}
 
-	if len(respObj.Data) == 0 || respObj.Data[0].Intensity == nil {
+	if len(respObj.Data) == 0 {
 		return nil, ErrNoResponse
 	}
-	return respObj.Data[0].Intensity, nil
+	return &respObj.Data[0], nil
 }

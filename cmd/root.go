@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/thegreenwebfoundation/grid-intensity-go/carbonintensity"
 	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
 	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
@@ -61,6 +62,26 @@ func init() {
 
 	viper.BindPFlag(provider, rootCmd.PersistentFlags().Lookup(provider))
 	viper.BindPFlag(region, rootCmd.PersistentFlags().Lookup(region))
+}
+
+func getCarbonIntensityOrgUK(ctx context.Context, region string) error {
+	c, err := carbonintensity.New()
+	if err != nil {
+		return fmt.Errorf("could not make provider %v", err)
+	}
+
+	result, err := c.GetCarbonIntensityData(ctx, region)
+	if err != nil {
+		return err
+	}
+
+	bytes, err := json.MarshalIndent(result, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(bytes))
+	return nil
 }
 
 func getEmberGridIntensityForCountry(countryCode string) error {
@@ -149,6 +170,19 @@ func runRoot() error {
 	}
 
 	switch providerName {
+	case carbonintensity.ProviderName:
+		if regionCode == "" {
+			regionCode = "UK"
+		}
+		if regionCode != "UK" {
+			return fmt.Errorf("only region UK is supported")
+		}
+		viper.Set(region, regionCode)
+
+		err = getCarbonIntensityOrgUK(ctx, regionCode)
+		if err != nil {
+			return err
+		}
 	case ember.ProviderName:
 		if regionCode == "" {
 			regionCode, err = getCountryCode()
