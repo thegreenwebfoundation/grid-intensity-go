@@ -26,10 +26,7 @@ func getConfig() (string, string, error) {
 	err = viper.ReadInConfig()
 	if _, ok := err.(*fs.PathError); ok {
 		// Create config dir if it doesn't exist.
-		err = os.Mkdir(filepath.Join(homeDir, configDir), os.ModePerm)
-		if _, ok := err.(*fs.PathError); !ok {
-			return "", "", err
-		}
+		os.Mkdir(filepath.Join(homeDir, configDir), os.ModePerm)
 
 		// Create config file if it doesn't exist.
 		_, err = os.Create(configFile)
