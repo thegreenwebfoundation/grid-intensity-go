@@ -9,6 +9,8 @@ import (
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
+const ProviderName = "carbonintensity.org.uk"
+
 type ApiOption func(*ApiClient) error
 
 func New(opts ...ApiOption) (gridintensity.Provider, error) {
