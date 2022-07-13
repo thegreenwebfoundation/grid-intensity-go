@@ -21,7 +21,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: true
+          load: true
           tags: thegreenwebfoundation/grid-intensity:integration-test
       -
         name: Docker run
