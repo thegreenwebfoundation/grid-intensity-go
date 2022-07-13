@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+          - exporter
+        env:
+        - name: GRID_INTENSITY_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}
+              key: gridIntensityProvider
+        - name: GRID_INTENSITY_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}
+              key: gridIntensityRegion
+        {{ if .Values.electricityMap.apiToken }}
+        - name: ELECTRICITY_MAP_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: apiToken
+        {{ end }}
+        {{ if .Values.wattTime.apiUser }}
+        - name: WATT_TIME_API_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: apiUser
+        {{ end }}
+        {{ if .Values.wattTime.apiPassword }}
+        - name: WATT_TIME_API_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: apiPassword
+        {{ end }}
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 50m
+            memory: 50Mi

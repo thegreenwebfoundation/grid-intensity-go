@@ -61,6 +61,11 @@ func init() {
 
 	viper.BindPFlag(provider, rootCmd.PersistentFlags().Lookup(provider))
 	viper.BindPFlag(region, rootCmd.PersistentFlags().Lookup(region))
+
+	// Also support environment variables.
+	viper.SetEnvPrefix("grid_intensity")
+	viper.BindEnv(provider)
+	viper.BindEnv(region)
 }
 
 func getEmberGridIntensityForCountry(countryCode string) error {

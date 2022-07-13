@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/Xuanwo/go-locale v1.1.0
+	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/gofrs/flock v0.8.1
 	github.com/jellydator/ttlcache/v2 v2.11.1
 	github.com/prometheus/client_golang v1.12.2
