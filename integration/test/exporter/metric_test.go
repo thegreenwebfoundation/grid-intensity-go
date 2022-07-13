@@ -1,7 +1,7 @@
 //go:build dockerrequired
 // +build dockerrequired
 
-package docker
+package exporter
 
 import (
 	"fmt"
