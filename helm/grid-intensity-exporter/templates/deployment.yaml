@@ -34,27 +34,31 @@ spec:
             configMapKeyRef:
               name: {{ .Release.Name }}
               key: gridIntensityRegion
-        {{ if .Values.electricityMap.apiToken }}
+        {{- if .Values.electricityMap }}
+        {{- if .Values.electricityMap.apiToken }}
         - name: ELECTRICITY_MAP_API_TOKEN
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: apiToken
-        {{ end }}
-        {{ if .Values.wattTime.apiUser }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.wattTime }}
+        {{- if .Values.wattTime.apiUser }}
         - name: WATT_TIME_API_USER
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: apiUser
-        {{ end }}
-        {{ if .Values.wattTime.apiPassword }}
+        {{- end }}
+        {{- if .Values.wattTime.apiPassword }}
         - name: WATT_TIME_API_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: apiPassword
-        {{ end }}
+        {{- end }}
+        {{- end }}
         resources:
           requests:
             cpu: 50m
