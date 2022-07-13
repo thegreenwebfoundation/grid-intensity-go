@@ -4,7 +4,7 @@ gridIntensity:
   region: GBR
 
 image:
-  repository: thegreenwebfoundation/grid-intensity-exporter
+  repository: thegreenwebfoundation/grid-intensity
   tag: latest
   pullPolicy: IfNotPresent
 

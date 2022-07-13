@@ -22,13 +22,13 @@ jobs:
         with:
           context: .
           load: true
-          tags: thegreenwebfoundation/grid-intensity-exporter:integration-test
+          tags: thegreenwebfoundation/grid-intensity:integration-test
       - 
         name: Create kubernetes Kind Cluster
         uses: helm/kind-action@v1.3.0
       - 
         name: Load image into Kind cluster
-        run: kind load docker-image --name chart-testing thegreenwebfoundation/grid-intensity-exporter:integration-test
+        run: kind load docker-image --name chart-testing thegreenwebfoundation/grid-intensity:integration-test
       - 
         name: Set up Helm
         uses: azure/setup-helm@v3
