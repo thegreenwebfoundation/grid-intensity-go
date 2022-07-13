@@ -40,4 +40,4 @@ jobs:
         run: nomad run ./nomad/grid-intensity-exporter.nomad
       -
         name: Run integration test
-        run: go test -v -tags=dockerrequired ./integration/test/docker
+        run: go test -v -tags=dockerrequired ./integration/test/exporter

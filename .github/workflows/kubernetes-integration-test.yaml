@@ -46,4 +46,4 @@ jobs:
         run: kubectl port-forward deployment/grid-intensity-exporter 8000:8000 &
       - 
         name: Run integration test
-        run: go test -v -tags=dockerrequired ./integration/test/docker
+        run: go test -v -tags=dockerrequired ./integration/test/exporter

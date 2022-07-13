@@ -28,4 +28,4 @@ jobs:
         run: docker run -d -e GRID_INTENSITY_REGION=GBR -p 8000:8000 thegreenwebfoundation/grid-intensity:integration-test exporter
       - 
         name: Run integration test
-        run: go test -v -tags=dockerrequired ./integration/test/docker
+        run: go test -v -tags=dockerrequired ./integration/test/exporter
