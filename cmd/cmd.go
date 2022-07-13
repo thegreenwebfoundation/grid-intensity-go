@@ -27,7 +27,7 @@ func getConfig() (string, string, error) {
 	if _, ok := err.(*fs.PathError); ok {
 		// Create config dir if it doesn't exist.
 		err = os.Mkdir(filepath.Join(homeDir, configDir), os.ModePerm)
-		if err != nil {
+		if _, ok := err.(*fs.PathError); !ok {
 			return "", "", err
 		}
 

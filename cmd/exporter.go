@@ -100,6 +100,10 @@ func NewExporter(provider, region string) (*Exporter, error) {
 	var units string
 	var err error
 
+	if region == "" {
+		return nil, fmt.Errorf("region must be set")
+	}
+
 	switch provider {
 	case carbonintensity.ProviderName:
 		apiClient, err = carbonintensity.New()
