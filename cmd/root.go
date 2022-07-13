@@ -148,7 +148,7 @@ func getCountryCode() (string, error) {
 func runRoot() error {
 	ctx := context.Background()
 
-	providerName, regionCode, err := getConfig()
+	providerName, regionCode, err := readConfig()
 	if err != nil {
 		return err
 	}
@@ -177,7 +177,7 @@ func runRoot() error {
 		return fmt.Errorf("provider %q not recognized", providerName)
 	}
 
-	err = viper.WriteConfig()
+	err = writeConfig()
 	if err != nil {
 		return err
 	}
