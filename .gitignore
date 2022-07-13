@@ -13,5 +13,8 @@
 
 dist/
 
+grid-intensity
+grid-intenity-go
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
