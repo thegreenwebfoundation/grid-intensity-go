@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -20,14 +19,12 @@ import (
 )
 
 const (
-	cacheDir               = ".cache/grid-intensity"
-	cacheFileName          = "watttime.org.json"
-	configDir              = ".config/grid-intensity"
-	configFileName         = "config.yaml"
-	provider               = "provider"
-	region                 = "region"
-	wattTimeUserEnvVar     = "WATT_TIME_USER"
-	wattTimePasswordEnvVar = "WATT_TIME_PASSWORD"
+	cacheDir       = ".cache/grid-intensity"
+	cacheFileName  = "watttime.org.json"
+	configDir      = ".config/grid-intensity"
+	configFileName = "config.yaml"
+	provider       = "provider"
+	region         = "region"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -43,7 +40,7 @@ grid is greener or at locations where carbon intensity is lower.
 	grid-intensity -r BOL`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		err := runWithError()
+		err := runRoot()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -58,11 +55,12 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP(provider, "p", ember.ProviderName, "Provider of carbon intensity data")
-	rootCmd.Flags().StringP(region, "r", "", "Region code for provider")
+	// Use persistent flags so they are available to all subcommands.
+	rootCmd.PersistentFlags().StringP(provider, "p", ember.ProviderName, "Provider of carbon intensity data")
+	rootCmd.PersistentFlags().StringP(region, "r", "", "Region code for provider")
 
-	viper.BindPFlag(provider, rootCmd.Flags().Lookup(provider))
-	viper.BindPFlag(region, rootCmd.Flags().Lookup(region))
+	viper.BindPFlag(provider, rootCmd.PersistentFlags().Lookup(provider))
+	viper.BindPFlag(region, rootCmd.PersistentFlags().Lookup(region))
 }
 
 func getEmberGridIntensityForCountry(countryCode string) error {
@@ -142,36 +140,13 @@ func getCountryCode() (string, error) {
 	return strings.TrimSpace(country), nil
 }
 
-func runWithError() error {
+func runRoot() error {
 	ctx := context.Background()
 
-	homeDir, err := os.UserHomeDir()
+	providerName, regionCode, err := getConfig()
 	if err != nil {
-		return nil
-	}
-
-	configFile := filepath.Join(homeDir, configDir, configFileName)
-	viper.SetConfigFile(configFile)
-
-	err = viper.ReadInConfig()
-	if _, ok := err.(*fs.PathError); ok {
-		// Create config dir if it doesn't exist.
-		err = os.Mkdir(filepath.Join(homeDir, configDir), os.ModePerm)
-		if err != nil {
-			return err
-		}
-
-		// Create config file if it doesn't exist.
-		_, err = os.Create(configFile)
-		if err != nil {
-			return err
-		}
-	} else if err != nil {
 		return err
 	}
-
-	providerName := viper.GetString(provider)
-	regionCode := viper.GetString(region)
 
 	switch providerName {
 	case ember.ProviderName:

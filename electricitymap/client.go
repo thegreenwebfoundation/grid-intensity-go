@@ -10,6 +10,8 @@ import (
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
+const ProviderName = "electricitymap.org"
+
 type ApiOption func(*ApiClient) error
 
 func New(token string, opts ...ApiOption) (gridintensity.Provider, error) {
