@@ -1,6 +1,6 @@
 package electricitymap
 
-type CarbonIntensityResp struct {
+type CarbonIntensityData struct {
 	Zone            string  `json:"zone"`
 	CarbonIntensity float64 `json:"carbonIntensity"`
 }
