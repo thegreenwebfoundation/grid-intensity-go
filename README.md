@@ -21,6 +21,30 @@ We call this the fuel mix, and this fuel mix can impact on the carbon intensity 
 
 Because the fuel mix will be different depending when and where you run your code, you can influence the carbon intensity of the code you write by moving it through time and space - either by making it run when the grid is greener, or making it run where it's greener, like a CDN running on green power.
 
+## Inspired By
+
+This tool builds on research and tools developed from across the sustainable software community. 
+
+### Articles
+
+- A carbon aware internet - Branch magazine - https://branch.climateaction.tech/issues/issue-2/a-carbon-aware-internet/
+- Carbon Aware Kubernetes - https://devblogs.microsoft.com/sustainable-software/carbon-aware-kubernetes/
+- Clean energy technologies threaten to overwhelm the grid. Here’s how it can adapt. - https://www.vox.com/energy-and-environment/2018/11/30/17868620/renewable-energy-power-grid-architecture
+
+### Papers
+
+- A Tale of Two Visions: Designing a Decentralized Transactive Electric System - https://ieeexplore.ieee.org/document/7452738
+- Cucumber: Renewable-Aware Admission Control for Delay-Tolerant Cloud and Edge Workloads - https://arxiv.org/abs/2205.02895 
+- The carbon aware scheduler - https://pypi.org/project/carbon-aware-scheduler/
+- Let's Wait Awhile: How Temporal Workload Shifting Can Reduce Carbon Emissions in the Cloud - https://arxiv.org/abs/2110.13234
+
+### Tools
+
+- Carbon Aware Nomad - experimental branch - https://github.com/hashicorp/nomad/blob/h-carbon-meta/CARBON.md
+- Carbon Explorer - https://github.com/facebookresearch/CarbonExplorer/
+- Scaphandre - https://github.com/hubblo-org/scaphandre
+- Solar Protocol - http://solarprotocol.net/
+
 ## Installing
 
 - Install via [brew](https://brew.sh/).
@@ -73,7 +97,7 @@ $ grid-intensity --provider carbonintensity.org.uk --region UK
 }
 ```
 
-See providers section for how to configure other providers.
+The [providers](#providers) section shows how to configure other providers.
 
 ## grid-intensity exporter
 
@@ -180,3 +204,6 @@ WATT_TIME_USER=your-user \
 WATT_TIME_PASSWORD=your-password \
 grid-intensity --provider=watttime.org --region=CAISO_NORTH
 ```
+
+## Inspired By
+
