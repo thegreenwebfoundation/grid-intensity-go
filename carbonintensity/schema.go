@@ -5,6 +5,8 @@ type CarbonIntensityResponse struct {
 }
 
 type IntensityData struct {
+	From      string     `json:"from"`
+	To        string     `json:"to"`
 	Intensity *Intensity `json:"intensity"`
 }
 
