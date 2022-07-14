@@ -16,7 +16,7 @@ job "grid-intensity-exporter" {
 
     network {
       # for testing, we can get away with having a fixed port
-      # but in production we'd let nomad allocated a port instead
+      # but in production we'd let nomad allocate a port instead
       port "exporter" {
         static = 8000
         to = 8000 
