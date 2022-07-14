@@ -7,7 +7,7 @@ A tool written in Go, designed to be integrated into Kubernetes, Nomad, and othe
 The tool has 3 components.
 
 - The `grid-intensity` CLI for interacting with carbon intensity data.
-- A Prometheus exporter with carbon intensity metrics that can be deployed via
+- A [Prometheus](https://prometheus.io/) exporter with carbon intensity metrics that can be deployed via
 Docker, Nomad, or Kubernetes.
 - A Go library that can be integrated into your Go code.
 
