@@ -5,11 +5,8 @@ job "grid-intensity-exporter" {
   # be considered when placing this task. This must be provided.
   datacenters = ["dc1"]
 
-  # system jobs run on every client node in a cluster, which is what we
-  # want, but this bug here means that running this job as a system on
-  # means that network ports aren't allocated properly
-  # https://github.com/hashicorp/nomad/issues/8934
-  # until it's resolved, we need to run this as a service instead
+  # the exporter job runs as a service with a single instance that
+  # can be scraped by prometheus.
   type = "service"
 
   group "grid-intensity-exporter" {
@@ -24,7 +21,8 @@ job "grid-intensity-exporter" {
     }
 
     task "grid-intensity-exporter" {
-
+      count = 1
+      
       driver = "docker"
       
       config {
