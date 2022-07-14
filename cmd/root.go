@@ -15,6 +15,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/carbonintensity"
+	"github.com/thegreenwebfoundation/grid-intensity-go/electricitymap"
 	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
 	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
@@ -86,6 +87,32 @@ func getCarbonIntensityOrgUK(ctx context.Context, region string) error {
 	}
 
 	fmt.Println(string(bytes))
+	return nil
+}
+
+func getElectricityMapGridIntensity(ctx context.Context, region string) error {
+	apiToken := os.Getenv(electricityMapAPITokenEnvVar)
+	if apiToken == "" {
+		return fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
+	}
+
+	c, err := electricitymap.New(apiToken)
+	if err != nil {
+		return fmt.Errorf("could not make provider %v", err)
+	}
+
+	result, err := c.GetCarbonIntensityData(ctx, region)
+	if err != nil {
+		return err
+	}
+
+	bytes, err := json.MarshalIndent(result, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(bytes))
+
 	return nil
 }
 
@@ -185,6 +212,11 @@ func runRoot() error {
 		viper.Set(region, regionCode)
 
 		err = getCarbonIntensityOrgUK(ctx, regionCode)
+		if err != nil {
+			return err
+		}
+	case electricitymap.ProviderName:
+		err = getElectricityMapGridIntensity(ctx, regionCode)
 		if err != nil {
 			return err
 		}

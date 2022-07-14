@@ -6,15 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
 const ProviderName = "electricitymap.org"
 
 type ApiOption func(*ApiClient) error
 
-func New(token string, opts ...ApiOption) (gridintensity.Provider, error) {
+func New(token string, opts ...ApiOption) (*ApiClient, error) {
 	a := &ApiClient{}
 	for _, opt := range opts {
 		err := opt(a)
@@ -44,26 +42,44 @@ type ApiClient struct {
 }
 
 func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", a.intensityURLWithZone(region), nil)
+	data, err := a.getCarbonIntensity(ctx, region)
 	if err != nil {
 		return 0, err
 	}
+
+	return data.CarbonIntensity, nil
+}
+
+func (a *ApiClient) GetCarbonIntensityData(ctx context.Context, region string) (*CarbonIntensityData, error) {
+	data, err := a.getCarbonIntensity(ctx, region)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (a *ApiClient) getCarbonIntensity(ctx context.Context, region string) (*CarbonIntensityData, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", a.intensityURLWithZone(region), nil)
+	if err != nil {
+		return nil, err
+	}
 	resp, err := a.do(req)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return 0, errBadStatus(resp)
+		return nil, errBadStatus(resp)
 	}
 
-	respObj := &CarbonIntensityResp{}
+	respObj := &CarbonIntensityData{}
 	err = json.NewDecoder(resp.Body).Decode(respObj)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return respObj.CarbonIntensity, nil
+	return respObj, nil
 }
 
 func (a *ApiClient) intensityURLWithZone(zone string) string {
