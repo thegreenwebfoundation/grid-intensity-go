@@ -11,6 +11,8 @@ job "grid-intensity-exporter" {
 
   group "grid-intensity-exporter" {
 
+    count = 1
+
     network {
       # for testing, we can get away with having a fixed port
       # but in production we'd let nomad allocate a port instead
@@ -21,7 +23,6 @@ job "grid-intensity-exporter" {
     }
 
     task "grid-intensity-exporter" {
-      count = 1
       
       driver = "docker"
       
