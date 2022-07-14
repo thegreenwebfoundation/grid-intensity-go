@@ -1,0 +1,31 @@
+name: docker-integration-test
+on: [push]
+jobs:
+  docker-integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Checkout code
+        uses: actions/checkout@v3
+      - 
+        name: Go build
+        run: CGO_ENABLED=0 GOOS=linux go build -o grid-intensity .
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Docker build
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          tags: thegreenwebfoundation/grid-intensity:integration-test
+      -
+        name: Docker run
+        run: docker run -d -e GRID_INTENSITY_REGION=GBR -p 8000:8000 thegreenwebfoundation/grid-intensity:integration-test exporter
+      - 
+        name: Run integration test
+        run: go test -v -tags=dockerrequired ./integration/test/exporter

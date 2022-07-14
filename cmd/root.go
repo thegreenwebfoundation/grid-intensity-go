@@ -62,6 +62,11 @@ func init() {
 
 	viper.BindPFlag(provider, rootCmd.PersistentFlags().Lookup(provider))
 	viper.BindPFlag(region, rootCmd.PersistentFlags().Lookup(region))
+
+	// Also support environment variables.
+	viper.SetEnvPrefix("grid_intensity")
+	viper.BindEnv(provider)
+	viper.BindEnv(region)
 }
 
 func getCarbonIntensityOrgUK(ctx context.Context, region string) error {
@@ -164,7 +169,7 @@ func getCountryCode() (string, error) {
 func runRoot() error {
 	ctx := context.Background()
 
-	providerName, regionCode, err := getConfig()
+	providerName, regionCode, err := readConfig()
 	if err != nil {
 		return err
 	}
@@ -206,7 +211,7 @@ func runRoot() error {
 		return fmt.Errorf("provider %q not recognized", providerName)
 	}
 
-	err = viper.WriteConfig()
+	err = writeConfig()
 	if err != nil {
 		return err
 	}

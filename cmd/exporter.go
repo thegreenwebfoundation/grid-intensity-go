@@ -11,7 +11,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 	"github.com/thegreenwebfoundation/grid-intensity-go/carbonintensity"
@@ -229,7 +228,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func runExporter() error {
-	providerName, regionCode, err := getConfig()
+	providerName, regionCode, err := readConfig()
 	if err != nil {
 		return err
 	}
@@ -239,7 +238,7 @@ func runExporter() error {
 		return err
 	}
 
-	err = viper.WriteConfig()
+	err = writeConfig()
 	if err != nil {
 		return err
 	}

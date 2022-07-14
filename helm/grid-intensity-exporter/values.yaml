@@ -1,0 +1,41 @@
+# This is the default provider with the Ember 2021 dataset.
+gridIntensity:
+  provider: ember-climate.org
+  region: GBR
+
+image:
+  repository: thegreenwebfoundation/grid-intensity
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# This provider doesn't require an API key but it only
+# supports the UK region.
+#
+# gridIntensity:
+#   provider: carbonintensity.org.uk
+#   region: UK
+
+# ElectricityMap provider supports multiple countries but you will need to set
+# an API key in electricityMap.apiToken 
+#
+# gridIntensity:
+#   provider: electricitymap.org
+#   region: IN-KA
+
+# WattTime provider supports multiple countries but you will need to set an API
+# user in wattTime.apiUser and wattTime.apiPassword
+#
+# gridIntensity:
+#   provider: watttime.org
+#   region: CAISO_NORTH
+
+# Get API token from https://electricitymaps.com/
+#
+# electricityMap:
+#   apiToken: your-api-key
+
+# To register an API user see https://www.watttime.org/api-documentation/#authentication
+#
+# wattTime:
+#   apiUser: your-api-user
+#   apiPassword: your-api-password
