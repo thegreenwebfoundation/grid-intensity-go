@@ -42,6 +42,7 @@ This tool builds on research and tools developed from across the sustainable sof
 
 - Carbon Aware Nomad - experimental branch - https://github.com/hashicorp/nomad/blob/h-carbon-meta/CARBON.md
 - Carbon Explorer - https://github.com/facebookresearch/CarbonExplorer/
+- Cloud Carbon Footprint - https://www.cloudcarbonfootprint.org/
 - Scaphandre - https://github.com/hubblo-org/scaphandre
 - Solar Protocol - http://solarprotocol.net/
 
