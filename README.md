@@ -35,7 +35,6 @@ This tool builds on research and tools developed from across the sustainable sof
 
 - A Tale of Two Visions: Designing a Decentralized Transactive Electric System - https://ieeexplore.ieee.org/document/7452738
 - Cucumber: Renewable-Aware Admission Control for Delay-Tolerant Cloud and Edge Workloads - https://arxiv.org/abs/2205.02895 
-- The carbon aware scheduler - https://pypi.org/project/carbon-aware-scheduler/
 - Let's Wait Awhile: How Temporal Workload Shifting Can Reduce Carbon Emissions in the Cloud - https://arxiv.org/abs/2110.13234
 
 ### Tools
@@ -45,6 +44,7 @@ This tool builds on research and tools developed from across the sustainable sof
 - Cloud Carbon Footprint - https://www.cloudcarbonfootprint.org/
 - Scaphandre - https://github.com/hubblo-org/scaphandre
 - Solar Protocol - http://solarprotocol.net/
+- The carbon aware scheduler - https://pypi.org/project/carbon-aware-scheduler/
 
 ## Installing
 
