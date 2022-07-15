@@ -205,6 +205,3 @@ WATT_TIME_USER=your-user \
 WATT_TIME_PASSWORD=your-password \
 grid-intensity --provider=watttime.org --region=CAISO_NORTH
 ```
-
-## Inspired By
-
