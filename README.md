@@ -34,13 +34,13 @@ This tool builds on research and tools developed from across the sustainable sof
 ### Papers
 
 - A Tale of Two Visions: Designing a Decentralized Transactive Electric System - https://ieeexplore.ieee.org/document/7452738
+- Carbon Explorer - https://github.com/facebookresearch/CarbonExplorer/
 - Cucumber: Renewable-Aware Admission Control for Delay-Tolerant Cloud and Edge Workloads - https://arxiv.org/abs/2205.02895 
 - Let's Wait Awhile: How Temporal Workload Shifting Can Reduce Carbon Emissions in the Cloud - https://arxiv.org/abs/2110.13234
 
 ### Tools
 
 - Carbon Aware Nomad - experimental branch - https://github.com/hashicorp/nomad/blob/h-carbon-meta/CARBON.md
-- Carbon Explorer - https://github.com/facebookresearch/CarbonExplorer/
 - Cloud Carbon Footprint - https://www.cloudcarbonfootprint.org/
 - Scaphandre - https://github.com/hubblo-org/scaphandre
 - Solar Protocol - http://solarprotocol.net/
