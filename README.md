@@ -57,7 +57,7 @@ brew install thegreenwebfoundation/carbon-aware-tools/grid-intensity
 - Install via curl (feel free to do due diligence and check the [script](https://github.com/thegreenwebfoundation/grid-intensity-go/blob/main/install.sh) first).
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/thegreenwebfoundation/grid-intensity-go/install-script/install.sh | sudo sh
+curl -fsSL https://raw.githubusercontent.com/thegreenwebfoundation/grid-intensity-go/main/install.sh | sudo sh 
 ```
 
 - Fetch a binary release from the [releases](https://github.com/thegreenwebfoundation/grid-intensity-go/releases) page.
