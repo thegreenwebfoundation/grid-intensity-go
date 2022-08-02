@@ -82,9 +82,9 @@ func (a *CarbonIntensityUKClient) GetCarbonIntensity(ctx context.Context, region
 
 	return []CarbonIntensity{
 		{
-			DataProvider:  CarbonIntensityOrgUK,
 			EmissionsType: AverageEmissionsType,
 			MetricType:    AbsoluteMetricType,
+			Provider:      CarbonIntensityOrgUK,
 			Region:        region,
 			Units:         GramsCO2EPerkWh,
 			ValidFrom:     validFrom,

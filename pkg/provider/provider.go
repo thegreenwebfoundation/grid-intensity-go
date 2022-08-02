@@ -23,9 +23,9 @@ const (
 )
 
 type CarbonIntensity struct {
-	DataProvider  string    `json:"data_provider"`
 	EmissionsType string    `json:"emissions_type"`
 	MetricType    string    `json:"metric_type"`
+	Provider      string    `json:"provider"`
 	Region        string    `json:"region"`
 	Units         string    `json:"units"`
 	ValidFrom     time.Time `json:"valid_from"`

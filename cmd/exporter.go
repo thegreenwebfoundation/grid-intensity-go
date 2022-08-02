@@ -231,7 +231,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			averageDesc,
 			prometheus.GaugeValue,
 			averageIntensity.Value,
-			averageIntensity.DataProvider,
+			averageIntensity.Provider,
 			averageIntensity.Region,
 			averageIntensity.Units,
 		)
