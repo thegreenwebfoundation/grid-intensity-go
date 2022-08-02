@@ -14,9 +14,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/thegreenwebfoundation/grid-intensity-go/carbonintensity"
-	"github.com/thegreenwebfoundation/grid-intensity-go/electricitymap"
 	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
+	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
 
@@ -25,8 +24,8 @@ const (
 	cacheFileName  = "watttime.org.json"
 	configDir      = ".config/grid-intensity"
 	configFileName = "config.yaml"
-	provider       = "provider"
-	region         = "region"
+	providerKey    = "provider"
+	regionKey      = "region"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -58,25 +57,26 @@ func Execute() {
 
 func init() {
 	// Use persistent flags so they are available to all subcommands.
-	rootCmd.PersistentFlags().StringP(provider, "p", ember.ProviderName, "Provider of carbon intensity data")
-	rootCmd.PersistentFlags().StringP(region, "r", "", "Region code for provider")
+	rootCmd.PersistentFlags().StringP(providerKey, "p", ember.ProviderName, "Provider of carbon intensity data")
+	rootCmd.PersistentFlags().StringP(regionKey, "r", "", "Region code for provider")
 
-	viper.BindPFlag(provider, rootCmd.PersistentFlags().Lookup(provider))
-	viper.BindPFlag(region, rootCmd.PersistentFlags().Lookup(region))
+	viper.BindPFlag(providerKey, rootCmd.PersistentFlags().Lookup(providerKey))
+	viper.BindPFlag(regionKey, rootCmd.PersistentFlags().Lookup(regionKey))
 
 	// Also support environment variables.
 	viper.SetEnvPrefix("grid_intensity")
-	viper.BindEnv(provider)
-	viper.BindEnv(region)
+	viper.BindEnv(providerKey)
+	viper.BindEnv(regionKey)
 }
 
 func getCarbonIntensityOrgUK(ctx context.Context, region string) error {
-	c, err := carbonintensity.New()
+	c := provider.CarbonIntensityUKConfig{}
+	p, err := provider.NewCarbonIntensityUK(c)
 	if err != nil {
 		return fmt.Errorf("could not make provider %v", err)
 	}
 
-	result, err := c.GetCarbonIntensityData(ctx, region)
+	result, err := p.GetCarbonIntensity(ctx, region)
 	if err != nil {
 		return err
 	}
@@ -96,12 +96,13 @@ func getElectricityMapGridIntensity(ctx context.Context, region string) error {
 		return fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
 	}
 
-	c, err := electricitymap.New(apiToken)
+	c := provider.ElectricityMapConfig{}
+	p, err := provider.NewElectricityMap(c)
 	if err != nil {
 		return fmt.Errorf("could not make provider %v", err)
 	}
 
-	result, err := c.GetCarbonIntensityData(ctx, region)
+	result, err := p.GetCarbonIntensity(ctx, region)
 	if err != nil {
 		return err
 	}
@@ -112,7 +113,6 @@ func getElectricityMapGridIntensity(ctx context.Context, region string) error {
 	}
 
 	fmt.Println(string(bytes))
-
 	return nil
 }
 
@@ -202,20 +202,20 @@ func runRoot() error {
 	}
 
 	switch providerName {
-	case carbonintensity.ProviderName:
+	case provider.CarbonIntensityOrgUK:
 		if regionCode == "" {
 			regionCode = "UK"
 		}
 		if regionCode != "UK" {
 			return fmt.Errorf("only region UK is supported")
 		}
-		viper.Set(region, regionCode)
+		viper.Set(regionKey, regionCode)
 
 		err = getCarbonIntensityOrgUK(ctx, regionCode)
 		if err != nil {
 			return err
 		}
-	case electricitymap.ProviderName:
+	case provider.ElectricityMap:
 		err = getElectricityMapGridIntensity(ctx, regionCode)
 		if err != nil {
 			return err
@@ -227,7 +227,7 @@ func runRoot() error {
 				return err
 			}
 
-			viper.Set(region, regionCode)
+			viper.Set(regionKey, regionCode)
 		}
 
 		err = getEmberGridIntensityForCountry(regionCode)
