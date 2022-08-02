@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
-	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
 
 const (
@@ -152,12 +151,18 @@ func getWattTimeGridIntensity(ctx context.Context, region string) error {
 	}
 
 	cacheFile := filepath.Join(homeDir, cacheDir, cacheFileName)
-	c, err := watttime.New(user, password, watttime.WithCacheFile(cacheFile))
+
+	c := provider.WattTimeConfig{
+		APIUser:     user,
+		APIPassword: password,
+		CacheFile:   cacheFile,
+	}
+	w, err := provider.NewWattTime(c)
 	if err != nil {
 		return fmt.Errorf("could not make provider %v", err)
 	}
 
-	result, err := c.GetCarbonIntensityData(ctx, region)
+	result, err := w.GetCarbonIntensity(ctx, region)
 	if err != nil {
 		return err
 	}
@@ -238,7 +243,7 @@ func runRoot() error {
 		if err != nil {
 			return err
 		}
-	case watttime.ProviderName:
+	case provider.WattTime:
 		err = getWattTimeGridIntensity(ctx, regionCode)
 		if err != nil {
 			return err
