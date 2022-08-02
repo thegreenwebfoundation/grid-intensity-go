@@ -219,56 +219,6 @@ func (w *WattTimeClient) getCarbonIntensityData(ctx context.Context, region stri
 		return nil, err
 	}
 
-	/*
-		result := []CarbonIntensity{}
-
-		freq, err := strconv.ParseInt(indexData.Freq, 0, 64)
-		if err != nil {
-			return nil, err
-		}
-
-		validFrom := indexData.PointTime
-		validTo := validFrom.Add(time.Duration(freq) * time.Second)
-
-		if indexData.Percent != "" {
-			percent, err := strconv.ParseFloat(indexData.Percent, 64)
-			if err != nil {
-				return nil, err
-			}
-			relative := CarbonIntensity{
-				EmissionsType: MarginalEmissionsType,
-				MetricType:    RelativeMetricType,
-				Provider:      WattTime,
-				Region:        region,
-				Units:         Percent,
-				ValidFrom:     validFrom,
-				ValidTo:       validTo,
-				Value:         percent,
-			}
-			result = append(result, relative)
-		}
-
-		if indexData.MOER != "" {
-			moer, err := strconv.ParseFloat(indexData.MOER, 64)
-			if err != nil {
-				return nil, err
-			}
-			marginal := CarbonIntensity{
-				EmissionsType: MarginalEmissionsType,
-				MetricType:    AbsoluteMetricType,
-				Provider:      WattTime,
-				Region:        region,
-				Units:         LbCO2EPerMWh,
-				ValidFrom:     validFrom,
-				ValidTo:       validTo,
-				Value:         moer,
-			}
-			result = append(result, marginal)
-		}
-
-		return result, nil
-	*/
-
 	return &indexData, nil
 }
 
