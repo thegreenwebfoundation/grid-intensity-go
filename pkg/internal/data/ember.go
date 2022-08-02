@@ -1,60 +1,17 @@
-package ember
+package data
 
 import (
 	"bytes"
-	"context"
 	_ "embed"
 	"encoding/csv"
-	"fmt"
 	"strconv"
-	"strings"
-
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 )
 
 //go:embed co2-intensities-ember-2021.csv
 var emberData []byte
 
-const ProviderName = "ember-climate.org"
-
-type ApiClient struct {
-	data map[string]GridIntensity
-}
-
-func New() (gridintensity.Provider, error) {
-	emberData, err := getGridIntensityData()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ApiClient{data: emberData}, nil
-}
-
-func (a *ApiClient) GetCarbonIntensity(ctx context.Context, region string) (float64, error) {
-	result, ok := a.data[strings.ToUpper(region)]
-	if !ok {
-		return 0, fmt.Errorf("region %q not found", region)
-	}
-
-	return result.EmissionsIntensityGCO2PerKWH, nil
-}
-
-func GetGridIntensityForCountry(countryCode string) (*GridIntensity, error) {
-	emberData, err := getGridIntensityData()
-	if err != nil {
-		return nil, err
-	}
-
-	result, ok := emberData[strings.ToUpper(countryCode)]
-	if !ok {
-		return nil, fmt.Errorf("country code %q not found", countryCode)
-	}
-
-	return &result, nil
-}
-
-func getGridIntensityData() (map[string]GridIntensity, error) {
-	data := map[string]GridIntensity{}
+func GetEmberGridIntensity() (map[string]EmberGridIntensity, error) {
+	data := map[string]EmberGridIntensity{}
 
 	reader := bytes.NewReader(emberData)
 	rows, err := csv.NewReader(reader).ReadAll()
@@ -84,7 +41,7 @@ func getGridIntensityData() (map[string]GridIntensity, error) {
 			return nil, err
 		}
 
-		country := GridIntensity{
+		country := EmberGridIntensity{
 			CountryCodeISO2:              countryCodeISO2,
 			CountryCodeISO3:              countryCodeISO3,
 			CountryOrRegion:              row[2],
