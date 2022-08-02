@@ -207,19 +207,18 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			)
 		}
 	} else if e.provider == ember.ProviderName {
-		result, err := e.client.GetCarbonIntensity(ctx, e.region)
+		averageIntensity, err := e.apiClient.GetCarbonIntensity(ctx, e.region)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
 		}
 
-		averageIntensity := result[0]
 		ch <- prometheus.MustNewConstMetric(
 			averageDesc,
 			prometheus.GaugeValue,
-			averageIntensity.Value,
-			averageIntensity.DataProvider,
-			averageIntensity.Region,
-			averageIntensity.Units,
+			averageIntensity,
+			e.provider,
+			e.region,
+			e.units,
 		)
 	} else {
 		result, err := e.client.GetCarbonIntensity(ctx, e.region)
