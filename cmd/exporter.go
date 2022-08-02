@@ -11,8 +11,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
-	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
@@ -83,18 +81,13 @@ the grid is greener or at locations where carbon intensity is lower.
 )
 
 type Exporter struct {
-	apiClient gridintensity.Provider
-	client    provider.Interface
-	provider  string
-	region    string
-	units     string
+	client   provider.Interface
+	provider string
+	region   string
 }
 
 func NewExporter(providerName, regionName string) (*Exporter, error) {
-	var apiClient gridintensity.Provider
 	var client provider.Interface
-
-	var units string
 	var err error
 
 	if regionName == "" {
@@ -121,12 +114,11 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 		if err != nil {
 			return nil, err
 		}
-	case ember.ProviderName:
-		apiClient, err = ember.New()
+	case provider.Ember:
+		client, err = provider.NewEmber()
 		if err != nil {
 			return nil, err
 		}
-		units = "gCO2 per kWh"
 	case watttime.ProviderName:
 		user := os.Getenv(wattTimeUserEnvVar)
 		if user == "" {
@@ -151,14 +143,9 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 	}
 
 	e := &Exporter{
+		client:   client,
 		provider: providerName,
 		region:   regionName,
-		units:    units,
-	}
-	if providerName == ember.ProviderName {
-		e.apiClient = apiClient
-	} else {
-		e.client = client
 	}
 
 	return e, nil
@@ -195,20 +182,6 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 				)
 			}
 		}
-	} else if e.provider == ember.ProviderName {
-		averageIntensity, err := e.apiClient.GetCarbonIntensity(ctx, e.region)
-		if err != nil {
-			log.Printf("failed to get carbon intensity %#v", err)
-		}
-
-		ch <- prometheus.MustNewConstMetric(
-			averageDesc,
-			prometheus.GaugeValue,
-			averageIntensity,
-			e.provider,
-			e.region,
-			e.units,
-		)
 	} else {
 		result, err := e.client.GetCarbonIntensity(ctx, e.region)
 		if err != nil {

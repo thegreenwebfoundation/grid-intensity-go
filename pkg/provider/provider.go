@@ -21,6 +21,7 @@ const (
 
 	// Supported providers
 	CarbonIntensityOrgUK = "carbonintensity.org.uk"
+	Ember                = "ember-climate.org"
 	ElectricityMap       = "electricitymap.org"
 	WattTime             = "watttime.org"
 )

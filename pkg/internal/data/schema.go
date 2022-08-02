@@ -1,6 +1,6 @@
-package ember
+package data
 
-type GridIntensity struct {
+type EmberGridIntensity struct {
 	CountryCodeISO2              string  `json:"country_code_iso_2"`
 	CountryCodeISO3              string  `json:"country_code_iso_3"`
 	CountryOrRegion              string  `json:"country_or_region"`
