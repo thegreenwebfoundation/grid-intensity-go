@@ -50,8 +50,8 @@ func readConfig() (string, string, error) {
 		return "", "", err
 	}
 
-	providerName := viper.GetString(provider)
-	regionCode := viper.GetString(region)
+	providerName := viper.GetString(providerKey)
+	regionCode := viper.GetString(regionKey)
 
 	return providerName, regionCode, nil
 }

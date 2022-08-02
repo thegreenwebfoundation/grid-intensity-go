@@ -13,9 +13,8 @@ import (
 	"github.com/spf13/cobra"
 
 	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
-	"github.com/thegreenwebfoundation/grid-intensity-go/carbonintensity"
-	"github.com/thegreenwebfoundation/grid-intensity-go/electricitymap"
 	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
+	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
 
@@ -86,41 +85,45 @@ the grid is greener or at locations where carbon intensity is lower.
 
 type Exporter struct {
 	apiClient      gridintensity.Provider
+	client         provider.Interface
 	provider       string
 	region         string
 	units          string
 	wattTimeClient watttime.Provider
 }
 
-func NewExporter(provider, region string) (*Exporter, error) {
+func NewExporter(providerName, regionName string) (*Exporter, error) {
 	var apiClient gridintensity.Provider
+	var client provider.Interface
 	var wattTimeClient watttime.Provider
 
 	var units string
 	var err error
 
-	if region == "" {
+	if regionName == "" {
 		return nil, fmt.Errorf("region must be set")
 	}
 
-	switch provider {
-	case carbonintensity.ProviderName:
-		apiClient, err = carbonintensity.New()
+	switch providerName {
+	case provider.CarbonIntensityOrgUK:
+		c := provider.CarbonIntensityUKConfig{}
+		client, err = provider.NewCarbonIntensityUK(c)
 		if err != nil {
 			return nil, err
 		}
-		units = "gCO2 per kWh"
-	case electricitymap.ProviderName:
+	case provider.ElectricityMap:
 		token := os.Getenv(electricityMapAPITokenEnvVar)
 		if token == "" {
-			return nil, fmt.Errorf("please set the env variable %q", electricityMapAPITokenEnvVar)
+			return nil, fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
 		}
 
-		apiClient, err = electricitymap.New(token)
+		c := provider.ElectricityMapConfig{
+			Token: token,
+		}
+		client, err = provider.NewElectricityMap(c)
 		if err != nil {
 			return nil, err
 		}
-		units = "gCO2 per kWh"
 	case ember.ProviderName:
 		apiClient, err = ember.New()
 		if err != nil {
@@ -144,15 +147,17 @@ func NewExporter(provider, region string) (*Exporter, error) {
 		}
 		units = "lb CO2 per MWh"
 	default:
-		return nil, fmt.Errorf("provider %q not supported", provider)
+		return nil, fmt.Errorf("provider %q not supported", providerName)
 	}
 
 	e := &Exporter{
-		provider: provider,
-		region:   region,
+		provider: providerName,
+		region:   regionName,
 		units:    units,
 	}
-	if provider == watttime.ProviderName {
+	if providerName == provider.CarbonIntensityOrgUK || providerName == provider.ElectricityMap {
+		e.client = client
+	} else if providerName == watttime.ProviderName {
 		e.wattTimeClient = wattTimeClient
 	} else {
 		e.apiClient = apiClient
@@ -201,7 +206,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 				"percent",
 			)
 		}
-	} else {
+	} else if e.provider == ember.ProviderName {
 		averageIntensity, err := e.apiClient.GetCarbonIntensity(ctx, e.region)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
@@ -214,6 +219,21 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			e.provider,
 			e.region,
 			e.units,
+		)
+	} else {
+		result, err := e.client.GetCarbonIntensity(ctx, e.region)
+		if err != nil {
+			log.Printf("failed to get carbon intensity %#v", err)
+		}
+
+		averageIntensity := result[0]
+		ch <- prometheus.MustNewConstMetric(
+			averageDesc,
+			prometheus.GaugeValue,
+			averageIntensity.Value,
+			averageIntensity.Provider,
+			averageIntensity.Region,
+			averageIntensity.Units,
 		)
 	}
 }
