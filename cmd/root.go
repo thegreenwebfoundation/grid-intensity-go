@@ -14,7 +14,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/thegreenwebfoundation/grid-intensity-go/ember"
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
@@ -57,7 +56,7 @@ func Execute() {
 
 func init() {
 	// Use persistent flags so they are available to all subcommands.
-	rootCmd.PersistentFlags().StringP(providerKey, "p", ember.ProviderName, "Provider of carbon intensity data")
+	rootCmd.PersistentFlags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 	rootCmd.PersistentFlags().StringP(regionKey, "r", "", "Region code for provider")
 
 	viper.BindPFlag(providerKey, rootCmd.PersistentFlags().Lookup(providerKey))
@@ -116,8 +115,13 @@ func getElectricityMapGridIntensity(ctx context.Context, region string) error {
 	return nil
 }
 
-func getEmberGridIntensityForCountry(countryCode string) error {
-	result, err := ember.GetGridIntensityForCountry(countryCode)
+func getEmberGridIntensityForCountry(ctx context.Context, countryCode string) error {
+	p, err := provider.NewEmber()
+	if err != nil {
+		return fmt.Errorf("could not make provider %v", err)
+	}
+
+	result, err := p.GetCarbonIntensity(ctx, countryCode)
 	if err != nil {
 		return err
 	}
@@ -179,7 +183,7 @@ func getCountryCode() (string, error) {
 	region, _ := tag.Region()
 	country := region.ISO3()
 
-	fmt.Printf("Provider %s needs an ISO country code as a region parameter.\n", ember.ProviderName)
+	fmt.Printf("Provider %s needs an ISO country code as a region parameter.\n", provider.Ember)
 	if country != "" {
 		fmt.Printf("%s detected from your locale.\n", country)
 	}
@@ -220,7 +224,7 @@ func runRoot() error {
 		if err != nil {
 			return err
 		}
-	case ember.ProviderName:
+	case provider.Ember:
 		if regionCode == "" {
 			regionCode, err = getCountryCode()
 			if err != nil {
@@ -230,7 +234,7 @@ func runRoot() error {
 			viper.Set(regionKey, regionCode)
 		}
 
-		err = getEmberGridIntensityForCountry(regionCode)
+		err = getEmberGridIntensityForCountry(ctx, regionCode)
 		if err != nil {
 			return err
 		}
