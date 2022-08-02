@@ -27,7 +27,7 @@ func NewElectricityMap(config ElectricityMapConfig) (Interface, error) {
 		}
 	}
 	if config.APIURL == "" {
-		config.APIURL = "https://api.carbonintensity.org.uk/intensity/"
+		config.APIURL = "https://api.electricitymap.org/v3"
 	}
 
 	c := &ElectricityMapClient{
@@ -60,15 +60,24 @@ func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, region st
 		return nil, err
 	}
 
+	validFrom, err := time.Parse(time.RFC3339Nano, data.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+	validTo, err := time.Parse(time.RFC3339Nano, data.DateTime)
+	if err != nil {
+		return nil, err
+	}
+
 	return []CarbonIntensity{
 		{
-			DataProvider:  CarbonIntensityOrgUK,
 			EmissionsType: AverageEmissionsType,
 			MetricType:    AbsoluteMetricType,
+			Provider:      ElectricityMap,
 			Region:        region,
 			Units:         GramsCO2EPerkWh,
-			ValidFrom:     data.UpdatedAt,
-			ValidTo:       data.DateTime,
+			ValidFrom:     validFrom,
+			ValidTo:       validTo,
 			Value:         data.CarbonIntensity,
 		},
 	}, nil
@@ -79,8 +88,8 @@ func (e *ElectricityMapClient) intensityURLWithZone(zone string) string {
 }
 
 type electricityMapData struct {
-	Zone            string    `json:"zone"`
-	CarbonIntensity float64   `json:"carbonIntensity"`
-	DateTime        time.Time `json:"datetime"`
-	UpdatedAt       time.Time `json:"updatedAt"`
+	Zone            string  `json:"zone"`
+	CarbonIntensity float64 `json:"carbonIntensity"`
+	DateTime        string  `json:"datetime"`
+	UpdatedAt       string  `json:"updatedAt"`
 }
