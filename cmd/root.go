@@ -148,12 +148,18 @@ func getWattTimeGridIntensity(ctx context.Context, region string) error {
 	}
 
 	cacheFile := filepath.Join(homeDir, cacheDir, cacheFileName)
-	c, err := watttime.New(user, password, watttime.WithCacheFile(cacheFile))
+
+	c := provider.WattTimeConfig{
+		APIUser:     user,
+		APIPassword: password,
+		CacheFile:   cacheFile,
+	}
+	w, err := provider.NewWattTime(c)
 	if err != nil {
 		return fmt.Errorf("could not make provider %v", err)
 	}
 
-	result, err := c.GetCarbonIntensityData(ctx, region)
+	result, err := w.GetCarbonIntensity(ctx, region)
 	if err != nil {
 		return err
 	}

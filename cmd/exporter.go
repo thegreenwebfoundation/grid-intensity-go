@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -84,18 +83,16 @@ the grid is greener or at locations where carbon intensity is lower.
 )
 
 type Exporter struct {
-	apiClient      gridintensity.Provider
-	client         provider.Interface
-	provider       string
-	region         string
-	units          string
-	wattTimeClient watttime.Provider
+	apiClient gridintensity.Provider
+	client    provider.Interface
+	provider  string
+	region    string
+	units     string
 }
 
 func NewExporter(providerName, regionName string) (*Exporter, error) {
 	var apiClient gridintensity.Provider
 	var client provider.Interface
-	var wattTimeClient watttime.Provider
 
 	var units string
 	var err error
@@ -141,11 +138,14 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 			return nil, fmt.Errorf("%q env var must be set", wattTimePasswordEnvVar)
 		}
 
-		wattTimeClient, err = watttime.New(user, password)
+		c := provider.WattTimeConfig{
+			APIUser:     user,
+			APIPassword: password,
+		}
+		client, err = provider.NewWattTime(c)
 		if err != nil {
 			return nil, fmt.Errorf("could not make provider %v", err)
 		}
-		units = "lb CO2 per MWh"
 	default:
 		return nil, fmt.Errorf("provider %q not supported", providerName)
 	}
@@ -155,12 +155,10 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 		region:   regionName,
 		units:    units,
 	}
-	if providerName == provider.CarbonIntensityOrgUK || providerName == provider.ElectricityMap {
-		e.client = client
-	} else if providerName == watttime.ProviderName {
-		e.wattTimeClient = wattTimeClient
-	} else {
+	if providerName == ember.ProviderName {
 		e.apiClient = apiClient
+	} else {
+		e.client = client
 	}
 
 	return e, nil
@@ -170,41 +168,32 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
 	if e.provider == watttime.ProviderName {
-		data, err := e.wattTimeClient.GetCarbonIntensityData(ctx, e.region)
+		result, err := e.client.GetCarbonIntensity(ctx, e.region)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
 		}
 
-		if data.MOER != "" {
-			marginalIntensity, err := strconv.ParseFloat(data.MOER, 64)
-			if err != nil {
-				log.Printf("failed to parse marginal intensity %#v", err)
+		for _, data := range result {
+			if data.MetricType == provider.AbsoluteMetricType {
+				ch <- prometheus.MustNewConstMetric(
+					marginalDesc,
+					prometheus.GaugeValue,
+					data.Value,
+					data.Provider,
+					data.Region,
+					data.Units,
+				)
 			}
-
-			ch <- prometheus.MustNewConstMetric(
-				marginalDesc,
-				prometheus.GaugeValue,
-				marginalIntensity,
-				e.provider,
-				e.region,
-				e.units,
-			)
-		}
-
-		if data.Percent != "" {
-			relativeIntensity, err := strconv.ParseFloat(data.Percent, 64)
-			if err != nil {
-				log.Printf("failed to parse relative intensity %#v", err)
+			if data.MetricType == provider.RelativeMetricType {
+				ch <- prometheus.MustNewConstMetric(
+					relativeDesc,
+					prometheus.GaugeValue,
+					data.Value,
+					data.Provider,
+					data.Region,
+					data.Units,
+				)
 			}
-
-			ch <- prometheus.MustNewConstMetric(
-				relativeDesc,
-				prometheus.GaugeValue,
-				relativeIntensity,
-				e.provider,
-				e.region,
-				"percent",
-			)
 		}
 	} else if e.provider == ember.ProviderName {
 		averageIntensity, err := e.apiClient.GetCarbonIntensity(ctx, e.region)

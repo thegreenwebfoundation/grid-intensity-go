@@ -16,10 +16,13 @@ const (
 
 	// Supported units.
 	GramsCO2EPerkWh = "gCO2e per kWh"
+	LbCO2EPerMWh    = "lbCO2e per MWh"
+	Percent         = "percent"
 
 	// Supported providers
 	CarbonIntensityOrgUK = "carbonintensity.org.uk"
 	ElectricityMap       = "electricitymap.org"
+	WattTime             = "watttime.org"
 )
 
 type CarbonIntensity struct {
