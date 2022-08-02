@@ -18,8 +18,8 @@ const (
 	GramsCO2EPerkWh = "gCO2e per kWh"
 
 	// Supported providers
-	CarbonIntensityOrgUK = "CarbonIntensityOrgUK"
-	ElectricityMap       = "ElectricityMap"
+	CarbonIntensityOrgUK = "carbonintensity.org.uk"
+	ElectricityMap       = "electricitymap.org"
 )
 
 type CarbonIntensity struct {
