@@ -6,15 +6,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
-	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
 
 const (
@@ -83,17 +80,14 @@ the grid is greener or at locations where carbon intensity is lower.
 )
 
 type Exporter struct {
-	apiClient      gridintensity.Provider
-	client         provider.Interface
-	provider       string
-	region         string
-	units          string
-	wattTimeClient watttime.Provider
+	client   provider.Interface
+	provider string
+	region   string
+	units    string
 }
 
 func NewExporter(providerName, regionName string) (*Exporter, error) {
 	var client provider.Interface
-	var wattTimeClient watttime.Provider
 
 	var units string
 	var err error
@@ -127,7 +121,7 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 		if err != nil {
 			return nil, err
 		}
-	case watttime.ProviderName:
+	case provider.WattTime:
 		user := os.Getenv(wattTimeUserEnvVar)
 		if user == "" {
 			return nil, fmt.Errorf("%q env var must be set", wattTimeUserEnvVar)
@@ -138,24 +132,23 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 			return nil, fmt.Errorf("%q env var must be set", wattTimePasswordEnvVar)
 		}
 
-		wattTimeClient, err = watttime.New(user, password)
+		c := provider.WattTimeConfig{
+			APIUser:     user,
+			APIPassword: password,
+		}
+		client, err = provider.NewWattTime(c)
 		if err != nil {
 			return nil, fmt.Errorf("could not make provider %v", err)
 		}
-		units = "lb CO2 per MWh"
 	default:
 		return nil, fmt.Errorf("provider %q not supported", providerName)
 	}
 
 	e := &Exporter{
+		client:   client,
 		provider: providerName,
 		region:   regionName,
 		units:    units,
-	}
-	if providerName == watttime.ProviderName {
-		e.wattTimeClient = wattTimeClient
-	} else {
-		e.client = client
 	}
 
 	return e, nil
@@ -164,42 +157,33 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
-	if e.provider == watttime.ProviderName {
-		data, err := e.wattTimeClient.GetCarbonIntensityData(ctx, e.region)
+	if e.provider == provider.WattTime {
+		result, err := e.client.GetCarbonIntensity(ctx, e.region)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
 		}
 
-		if data.MOER != "" {
-			marginalIntensity, err := strconv.ParseFloat(data.MOER, 64)
-			if err != nil {
-				log.Printf("failed to parse marginal intensity %#v", err)
+		for _, data := range result {
+			if data.MetricType == provider.AbsoluteMetricType {
+				ch <- prometheus.MustNewConstMetric(
+					marginalDesc,
+					prometheus.GaugeValue,
+					data.Value,
+					data.Provider,
+					data.Region,
+					data.Units,
+				)
 			}
-
-			ch <- prometheus.MustNewConstMetric(
-				marginalDesc,
-				prometheus.GaugeValue,
-				marginalIntensity,
-				e.provider,
-				e.region,
-				e.units,
-			)
-		}
-
-		if data.Percent != "" {
-			relativeIntensity, err := strconv.ParseFloat(data.Percent, 64)
-			if err != nil {
-				log.Printf("failed to parse relative intensity %#v", err)
+			if data.MetricType == provider.RelativeMetricType {
+				ch <- prometheus.MustNewConstMetric(
+					relativeDesc,
+					prometheus.GaugeValue,
+					data.Value,
+					data.Provider,
+					data.Region,
+					data.Units,
+				)
 			}
-
-			ch <- prometheus.MustNewConstMetric(
-				relativeDesc,
-				prometheus.GaugeValue,
-				relativeIntensity,
-				e.provider,
-				e.region,
-				"percent",
-			)
 		}
 	} else {
 		result, err := e.client.GetCarbonIntensity(ctx, e.region)
@@ -220,7 +204,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
-	if e.provider == watttime.ProviderName {
+	if e.provider == provider.WattTime {
 		ch <- marginalDesc
 		ch <- relativeDesc
 	} else {
