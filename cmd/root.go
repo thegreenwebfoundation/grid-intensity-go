@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
-	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
 
 const (
@@ -244,7 +243,7 @@ func runRoot() error {
 		if err != nil {
 			return err
 		}
-	case watttime.ProviderName:
+	case provider.WattTime:
 		err = getWattTimeGridIntensity(ctx, regionCode)
 		if err != nil {
 			return err

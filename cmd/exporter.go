@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
-	"github.com/thegreenwebfoundation/grid-intensity-go/watttime"
 )
 
 const (
@@ -119,7 +118,7 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 		if err != nil {
 			return nil, err
 		}
-	case watttime.ProviderName:
+	case provider.WattTime:
 		user := os.Getenv(wattTimeUserEnvVar)
 		if user == "" {
 			return nil, fmt.Errorf("%q env var must be set", wattTimeUserEnvVar)
@@ -154,7 +153,7 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
-	if e.provider == watttime.ProviderName {
+	if e.provider == provider.WattTime {
 		result, err := e.client.GetCarbonIntensity(ctx, e.region)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
@@ -201,7 +200,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
-	if e.provider == watttime.ProviderName {
+	if e.provider == provider.WattTime {
 		ch <- marginalDesc
 		ch <- relativeDesc
 	} else {

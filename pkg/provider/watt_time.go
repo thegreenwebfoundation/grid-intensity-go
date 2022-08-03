@@ -99,56 +99,9 @@ func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, region st
 		return nil, err
 	}
 
-	freq, err := strconv.ParseInt(indexData.Freq, 0, 64)
+	result, ttl, err := parseCarbonIntensityData(ctx, region, indexData)
 	if err != nil {
 		return nil, err
-	}
-
-	validFrom := indexData.PointTime
-	validTo := validFrom.Add(time.Duration(freq) * time.Second)
-
-	ttl := validTo
-	if ttl.Before(time.Now()) {
-		// The TTL calculated from the point time is in the past. So reset the
-		// TTL using the current time plus the frequency provided by the API.
-		// UTC is used to match the WattTime API.
-		ttl = time.Now().UTC().Add(time.Duration(freq) * time.Second)
-	}
-
-	if indexData.Percent != "" {
-		percent, err := strconv.ParseFloat(indexData.Percent, 64)
-		if err != nil {
-			return nil, err
-		}
-		relative := CarbonIntensity{
-			EmissionsType: MarginalEmissionsType,
-			MetricType:    RelativeMetricType,
-			Provider:      WattTime,
-			Region:        region,
-			Units:         Percent,
-			ValidFrom:     validFrom,
-			ValidTo:       validTo,
-			Value:         percent,
-		}
-		result = append(result, relative)
-	}
-
-	if indexData.MOER != "" {
-		moer, err := strconv.ParseFloat(indexData.MOER, 64)
-		if err != nil {
-			return nil, err
-		}
-		marginal := CarbonIntensity{
-			EmissionsType: MarginalEmissionsType,
-			MetricType:    AbsoluteMetricType,
-			Provider:      WattTime,
-			Region:        region,
-			Units:         LbCO2EPerMWh,
-			ValidFrom:     validFrom,
-			ValidTo:       validTo,
-			Value:         moer,
-		}
-		result = append(result, marginal)
 	}
 
 	err = w.cache.setCacheData(ctx, region, result, ttl)
@@ -228,6 +181,64 @@ func (w *WattTimeClient) indexURL(region string) string {
 
 func (w *WattTimeClient) loginURL() string {
 	return fmt.Sprintf("%s/login", w.apiURL)
+}
+
+func parseCarbonIntensityData(ctx context.Context, region string, indexData *wattTimeIndexData) ([]CarbonIntensity, time.Time, error) {
+	freq, err := strconv.ParseInt(indexData.Freq, 0, 64)
+	if err != nil {
+		return nil, time.Time{}, err
+	}
+
+	validFrom := indexData.PointTime
+	validTo := validFrom.Add(time.Duration(freq) * time.Second)
+
+	ttl := validTo
+	if ttl.Before(time.Now()) {
+		// The TTL calculated from the point time is in the past. So reset the
+		// TTL using the current time plus the frequency provided by the API.
+		// UTC is used to match the WattTime API.
+		ttl = time.Now().UTC().Add(time.Duration(freq) * time.Second)
+	}
+
+	result := []CarbonIntensity{}
+
+	if indexData.Percent != "" {
+		percent, err := strconv.ParseFloat(indexData.Percent, 64)
+		if err != nil {
+			return nil, time.Time{}, err
+		}
+		relative := CarbonIntensity{
+			EmissionsType: MarginalEmissionsType,
+			MetricType:    RelativeMetricType,
+			Provider:      WattTime,
+			Region:        region,
+			Units:         Percent,
+			ValidFrom:     validFrom,
+			ValidTo:       validTo,
+			Value:         percent,
+		}
+		result = append(result, relative)
+	}
+
+	if indexData.MOER != "" {
+		moer, err := strconv.ParseFloat(indexData.MOER, 64)
+		if err != nil {
+			return nil, time.Time{}, err
+		}
+		marginal := CarbonIntensity{
+			EmissionsType: MarginalEmissionsType,
+			MetricType:    AbsoluteMetricType,
+			Provider:      WattTime,
+			Region:        region,
+			Units:         LbCO2EPerMWh,
+			ValidFrom:     validFrom,
+			ValidTo:       validTo,
+			Value:         moer,
+		}
+		result = append(result, marginal)
+	}
+
+	return result, ttl, nil
 }
 
 type wattTimeIndexData struct {
