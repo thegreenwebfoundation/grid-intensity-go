@@ -9,6 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 )
@@ -21,6 +22,12 @@ const (
 )
 
 func init() {
+	exporterCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
+	exporterCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
+
+	viper.BindPFlag(providerKey, exporterCmd.Flags().Lookup(providerKey))
+	viper.BindPFlag(regionKey, exporterCmd.Flags().Lookup(regionKey))
+
 	rootCmd.AddCommand(exporterCmd)
 }
 

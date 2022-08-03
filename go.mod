@@ -9,6 +9,7 @@ require (
 	github.com/google/go-cmp v0.5.8
 	github.com/jellydator/ttlcache/v2 v2.11.1
 	github.com/prometheus/client_golang v1.12.2
+	github.com/rodaine/table v1.0.1
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.12.0
 )

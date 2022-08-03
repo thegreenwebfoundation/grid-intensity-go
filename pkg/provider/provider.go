@@ -21,8 +21,8 @@ const (
 
 	// Supported providers
 	CarbonIntensityOrgUK = "CarbonIntensityOrgUK"
-	Ember                = "Ember"
 	ElectricityMap       = "ElectricityMap"
+	Ember                = "Ember"
 	WattTime             = "WattTime"
 )
 
@@ -37,6 +37,32 @@ type CarbonIntensity struct {
 	Value         float64   `json:"value"`
 }
 
+type Details struct {
+	Name string
+	URL  string
+}
+
 type Interface interface {
 	GetCarbonIntensity(ctx context.Context, region string) ([]CarbonIntensity, error)
+}
+
+func GetProviderDetails() []Details {
+	return []Details{
+		{
+			Name: CarbonIntensityOrgUK,
+			URL:  "carbonintensity.org.uk",
+		},
+		{
+			Name: ElectricityMap,
+			URL:  "electricitymap.org",
+		},
+		{
+			Name: Ember,
+			URL:  "ember-climate.org",
+		},
+		{
+			Name: WattTime,
+			URL:  "watttime.org",
+		},
+	}
 }
