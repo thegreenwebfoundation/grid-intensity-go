@@ -18,12 +18,12 @@ import (
 )
 
 const (
-	cacheDir       = ".cache/grid-intensity"
-	cacheFileName  = "watttime.org.json"
-	configDir      = ".config/grid-intensity"
-	configFileName = "config.yaml"
-	providerKey    = "provider"
-	regionKey      = "region"
+	cacheDir              = ".cache/grid-intensity"
+	configDir             = ".config/grid-intensity"
+	configFileName        = "config.yaml"
+	providerKey           = "provider"
+	regionKey             = "region"
+	wattTimeCacheFileName = "watttime.org.json"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -67,116 +67,6 @@ func init() {
 	viper.BindEnv(regionKey)
 }
 
-func getCarbonIntensityOrgUK(ctx context.Context, region string) error {
-	c := provider.CarbonIntensityUKConfig{}
-	p, err := provider.NewCarbonIntensityUK(c)
-	if err != nil {
-		return fmt.Errorf("could not make provider %v", err)
-	}
-
-	result, err := p.GetCarbonIntensity(ctx, region)
-	if err != nil {
-		return err
-	}
-
-	bytes, err := json.MarshalIndent(result, "", "\t")
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(bytes))
-	return nil
-}
-
-func getElectricityMapGridIntensity(ctx context.Context, region string) error {
-	apiToken := os.Getenv(electricityMapAPITokenEnvVar)
-	if apiToken == "" {
-		return fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
-	}
-
-	c := provider.ElectricityMapConfig{}
-	p, err := provider.NewElectricityMap(c)
-	if err != nil {
-		return fmt.Errorf("could not make provider %v", err)
-	}
-
-	result, err := p.GetCarbonIntensity(ctx, region)
-	if err != nil {
-		return err
-	}
-
-	bytes, err := json.MarshalIndent(result, "", "\t")
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(bytes))
-	return nil
-}
-
-func getEmberGridIntensityForCountry(ctx context.Context, countryCode string) error {
-	p, err := provider.NewEmber()
-	if err != nil {
-		return fmt.Errorf("could not make provider %v", err)
-	}
-
-	result, err := p.GetCarbonIntensity(ctx, countryCode)
-	if err != nil {
-		return err
-	}
-
-	bytes, err := json.MarshalIndent(result, "", "\t")
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(bytes))
-	return nil
-}
-
-func getWattTimeGridIntensity(ctx context.Context, region string) error {
-	user := os.Getenv(wattTimeUserEnvVar)
-	if user == "" {
-		return fmt.Errorf("%q env var must be set", wattTimeUserEnvVar)
-	}
-
-	password := os.Getenv(wattTimePasswordEnvVar)
-	if user == "" {
-		return fmt.Errorf("%q env var must be set", wattTimePasswordEnvVar)
-	}
-
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return nil
-	}
-
-	cacheFile := filepath.Join(homeDir, cacheDir, cacheFileName)
-
-	c := provider.WattTimeConfig{
-		APIUser:     user,
-		APIPassword: password,
-		CacheFile:   cacheFile,
-	}
-	w, err := provider.NewWattTime(c)
-	if err != nil {
-		return fmt.Errorf("could not make provider %v", err)
-	}
-
-	result, err := w.GetCarbonIntensity(ctx, region)
-	if err != nil {
-		return err
-	}
-
-	bytes, err := json.MarshalIndent(result, "", "\t")
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(bytes))
-
-	return nil
-}
-
 // getCountryCode prompts the user to enter a country code. We try to detect
 // a country code from the user's locale but the user can enter another value.
 func getCountryCode() (string, error) {
@@ -207,8 +97,10 @@ func runRoot() error {
 
 	providerName, regionCode, err := readConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("could not read config, %w", err)
 	}
+
+	var cacheFile string
 
 	switch providerName {
 	case provider.CarbonIntensityOrgUK:
@@ -219,42 +111,43 @@ func runRoot() error {
 			return fmt.Errorf("only region UK is supported")
 		}
 		viper.Set(regionKey, regionCode)
-
-		err = getCarbonIntensityOrgUK(ctx, regionCode)
-		if err != nil {
-			return err
-		}
-	case provider.ElectricityMap:
-		err = getElectricityMapGridIntensity(ctx, regionCode)
-		if err != nil {
-			return err
-		}
 	case provider.Ember:
 		if regionCode == "" {
 			regionCode, err = getCountryCode()
 			if err != nil {
 				return err
 			}
-
 			viper.Set(regionKey, regionCode)
 		}
-
-		err = getEmberGridIntensityForCountry(ctx, regionCode)
-		if err != nil {
-			return err
-		}
 	case provider.WattTime:
-		err = getWattTimeGridIntensity(ctx, regionCode)
+		homeDir, err := os.UserHomeDir()
 		if err != nil {
-			return err
+			return nil
 		}
-	default:
-		return fmt.Errorf("provider %q not recognized", providerName)
+		// Use file cache to prevent WattTime rate limiting.
+		cacheFile = filepath.Join(homeDir, cacheDir, wattTimeCacheFileName)
 	}
+
+	client, err := getClient(providerName, cacheFile)
+	if err != nil {
+		return fmt.Errorf("could not get client, %w", err)
+	}
+
+	res, err := client.GetCarbonIntensity(ctx, regionCode)
+	if err != nil {
+		return fmt.Errorf("could not get carbon intensity, %w", err)
+	}
+
+	bytes, err := json.MarshalIndent(res, "", "\t")
+	if err != nil {
+		return fmt.Errorf("could not marshal json, %w", err)
+	}
+
+	fmt.Println(string(bytes))
 
 	err = writeConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("could not write config, %w", err)
 	}
 
 	return nil
