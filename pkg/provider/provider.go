@@ -20,10 +20,10 @@ const (
 	Percent         = "percent"
 
 	// Supported providers
-	CarbonIntensityOrgUK = "carbonintensity.org.uk"
-	Ember                = "ember-climate.org"
-	ElectricityMap       = "electricitymap.org"
-	WattTime             = "watttime.org"
+	CarbonIntensityOrgUK = "CarbonIntensityOrgUK"
+	Ember                = "Ember"
+	ElectricityMap       = "ElectricityMap"
+	WattTime             = "WattTime"
 )
 
 type CarbonIntensity struct {
