@@ -44,7 +44,7 @@ func Test_ElectricityMap_SimpleRequest(t *testing.T) {
 		{
 			EmissionsType: "average",
 			MetricType:    "absolute",
-			Provider:      "electricitymap.org",
+			Provider:      "ElectricityMap",
 			Region:        "IN-KA",
 			Units:         "gCO2e per kWh",
 			ValidFrom:     time.Date(2020, 1, 1, 0, 0, 1, 0, time.UTC),

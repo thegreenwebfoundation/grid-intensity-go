@@ -59,7 +59,7 @@ func Test_WattTime_SimpleRequest(t *testing.T) {
 		{
 			EmissionsType: "marginal",
 			MetricType:    "relative",
-			Provider:      "watttime.org",
+			Provider:      "WattTime",
 			Region:        "CAISO_NORTH",
 			Units:         "percent",
 			ValidFrom:     time.Date(2022, 7, 6, 16, 25, 0, 0, time.UTC),
@@ -69,7 +69,7 @@ func Test_WattTime_SimpleRequest(t *testing.T) {
 		{
 			EmissionsType: "marginal",
 			MetricType:    "absolute",
-			Provider:      "watttime.org",
+			Provider:      "WattTime",
 			Region:        "CAISO_NORTH",
 			Units:         "lbCO2e per MWh",
 			ValidFrom:     time.Date(2022, 7, 6, 16, 25, 0, 0, time.UTC),

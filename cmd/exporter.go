@@ -75,7 +75,7 @@ This can be used to make your software carbon aware so it runs at times when
 the grid is greener or at locations where carbon intensity is lower.
 
 	grid-intensity exporter --provider PROVIDER --region ARG
-	grid-intensity exporter -p ember-climate.org -r BOL`,
+	grid-intensity exporter -p Ember -r BOL`,
 		Run: func(cmd *cobra.Command, args []string) {
 			err := runExporter()
 			if err != nil {

@@ -25,7 +25,7 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 				{
 					EmissionsType: "average",
 					MetricType:    "absolute",
-					Provider:      "ember-climate.org",
+					Provider:      "Ember",
 					Region:        "ESP",
 					Units:         "gCO2e per kWh",
 					ValidFrom:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -41,7 +41,7 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 				{
 					EmissionsType: "average",
 					MetricType:    "absolute",
-					Provider:      "ember-climate.org",
+					Provider:      "Ember",
 					Region:        "ES",
 					Units:         "gCO2e per kWh",
 					ValidFrom:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -57,7 +57,7 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 				{
 					EmissionsType: "average",
 					MetricType:    "absolute",
-					Provider:      "ember-climate.org",
+					Provider:      "Ember",
 					Region:        "GBR",
 					Units:         "gCO2e per kWh",
 					ValidFrom:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),

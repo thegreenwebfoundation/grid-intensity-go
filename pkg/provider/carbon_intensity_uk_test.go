@@ -48,7 +48,7 @@ func Test_CarbonIntensityUK_SimpleRequest(t *testing.T) {
 
 	expected := []CarbonIntensity{
 		{
-			Provider:      "carbonintensity.org.uk",
+			Provider:      "CarbonIntensityOrgUK",
 			EmissionsType: "average",
 			MetricType:    "absolute",
 			Region:        "UK",
