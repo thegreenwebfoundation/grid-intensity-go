@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -83,72 +82,26 @@ type Exporter struct {
 	client   provider.Interface
 	provider string
 	region   string
-	units    string
 }
 
 func NewExporter(providerName, regionName string) (*Exporter, error) {
 	var client provider.Interface
-
-	var units string
 	var err error
 
 	if regionName == "" {
 		return nil, fmt.Errorf("region must be set")
 	}
 
-	switch providerName {
-	case provider.CarbonIntensityOrgUK:
-		c := provider.CarbonIntensityUKConfig{}
-		client, err = provider.NewCarbonIntensityUK(c)
-		if err != nil {
-			return nil, err
-		}
-	case provider.ElectricityMap:
-		token := os.Getenv(electricityMapAPITokenEnvVar)
-		if token == "" {
-			return nil, fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
-		}
-
-		c := provider.ElectricityMapConfig{
-			Token: token,
-		}
-		client, err = provider.NewElectricityMap(c)
-		if err != nil {
-			return nil, err
-		}
-	case provider.Ember:
-		client, err = provider.NewEmber()
-		if err != nil {
-			return nil, err
-		}
-	case provider.WattTime:
-		user := os.Getenv(wattTimeUserEnvVar)
-		if user == "" {
-			return nil, fmt.Errorf("%q env var must be set", wattTimeUserEnvVar)
-		}
-
-		password := os.Getenv(wattTimePasswordEnvVar)
-		if user == "" {
-			return nil, fmt.Errorf("%q env var must be set", wattTimePasswordEnvVar)
-		}
-
-		c := provider.WattTimeConfig{
-			APIUser:     user,
-			APIPassword: password,
-		}
-		client, err = provider.NewWattTime(c)
-		if err != nil {
-			return nil, fmt.Errorf("could not make provider %v", err)
-		}
-	default:
-		return nil, fmt.Errorf("provider %q not supported", providerName)
+	// Cache filename is empty so we use in-memory cache.
+	client, err = getClient(providerName, "")
+	if err != nil {
+		return nil, err
 	}
 
 	e := &Exporter{
 		client:   client,
 		provider: providerName,
 		region:   regionName,
-		units:    units,
 	}
 
 	return e, nil
