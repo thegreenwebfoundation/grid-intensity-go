@@ -11,7 +11,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 
-	gridintensity "github.com/thegreenwebfoundation/grid-intensity-go/api"
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 )
 
@@ -81,11 +80,10 @@ the grid is greener or at locations where carbon intensity is lower.
 )
 
 type Exporter struct {
-	apiClient gridintensity.Provider
-	client    provider.Interface
-	provider  string
-	region    string
-	units     string
+	client   provider.Interface
+	provider string
+	region   string
+	units    string
 }
 
 func NewExporter(providerName, regionName string) (*Exporter, error) {
