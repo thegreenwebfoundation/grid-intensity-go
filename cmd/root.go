@@ -124,7 +124,7 @@ func runRoot() error {
 		if err != nil {
 			return nil
 		}
-		// Use file cache to prevent WattTime rate limiting.
+		// Use file cache to avoid API rate limiting.
 		cacheFile = filepath.Join(homeDir, cacheDir, wattTimeCacheFileName)
 	}
 
