@@ -86,7 +86,7 @@ You can also set the `GRID_INTENSITY_PROVIDER` and `GRID_INTENSITY_REGION` envir
 variables or edit the config file at `~/.config/grid-intensity/config.yaml`.
 
 ```sh
-$ grid-intensity --provider carbonintensity.org.uk --region UK
+$ grid-intensity --provider CarbonIntensityOrgUK --region UK
 {
 	"from": "2022-07-14T14:30Z",
 	"to": "2022-07-14T15:00Z",
@@ -105,8 +105,8 @@ The [providers](#providers) section shows how to configure other providers.
 The `exporter` subcommand starts the prometheus exporter on port 8000.
 
 ```sh
-$ grid-intensity exporter --provider ember-climate.org --region FR
-Using provider "ember-climate.org" with region "FR"
+$ grid-intensity exporter --provider Ember --region FR
+Using provider "Ember" with region "FR"
 Metrics available at :8000/metrics
 ```
 
@@ -116,7 +116,7 @@ View the metrics with curl.
 $ curl -s http://localhost:8000/metrics | grep grid
 # HELP grid_intensity_carbon_average Average carbon intensity for the electricity grid in this region.
 # TYPE grid_intensity_carbon_average gauge
-grid_intensity_carbon_average{provider="ember-climate.org",region="FR",units="gCO2 per kWh"} 67.781
+grid_intensity_carbon_average{provider="Ember",region="FR",units="gCO2 per kWh"} 67.781
 ```
 
 ### Docker Image
@@ -164,7 +164,7 @@ UK Carbon Intensity API https://carbonintensity.org.uk/ this is a public API
 and the only region supported is `UK`.
 
 ```sh
-grid-intensity --provider=carbonintensity.org.uk --region=UK
+grid-intensity --provider=CarbonIntensityOrgUK --region=UK
 ```
 
 ### ElectricityMap.org
@@ -177,7 +177,7 @@ The `region` parameter needs to be set to a zone present in the public [zones](h
 
 ```sh
 ELECTRICITY_MAP_API_TOKEN=your-token \
-grid-intensity --provider=electricitymap.org --region=IN-KA
+grid-intensity --provider=ElectricityMap --region=IN-KA
 ```
 
 ### Ember-Climate.org
@@ -186,7 +186,7 @@ Carbon intensity data from [Ember](https://ember-climate.org/), is embedded in t
 in accordance with their licensing - [CC-BY-SA 4.0](https://ember-climate.org/creative-commons/)
 
 ```sh
-grid-intensity --provider=ember-climate.org --region=DE
+grid-intensity --provider=Ember --region=DE
 ```
 
 The `region` parameter should be set to a 2 or 3 char ISO country code.
@@ -203,5 +203,5 @@ endpoint allows you to provide a latitude and longitude. See the [docs](https://
 ```sh
 WATT_TIME_USER=your-user \
 WATT_TIME_PASSWORD=your-password \
-grid-intensity --provider=watttime.org --region=CAISO_NORTH
+grid-intensity --provider=WattTime --region=CAISO_NORTH
 ```

@@ -9,6 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 )
@@ -21,6 +22,12 @@ const (
 )
 
 func init() {
+	exporterCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
+	exporterCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
+
+	viper.BindPFlag(providerKey, exporterCmd.Flags().Lookup(providerKey))
+	viper.BindPFlag(regionKey, exporterCmd.Flags().Lookup(regionKey))
+
 	rootCmd.AddCommand(exporterCmd)
 }
 
@@ -68,7 +75,7 @@ This can be used to make your software carbon aware so it runs at times when
 the grid is greener or at locations where carbon intensity is lower.
 
 	grid-intensity exporter --provider PROVIDER --region ARG
-	grid-intensity exporter -p ember-climate.org -r BOL`,
+	grid-intensity exporter -p Ember -r BOL`,
 		Run: func(cmd *cobra.Command, args []string) {
 			err := runExporter()
 			if err != nil {

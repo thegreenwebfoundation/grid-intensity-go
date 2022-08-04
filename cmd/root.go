@@ -54,12 +54,11 @@ func Execute() {
 }
 
 func init() {
-	// Use persistent flags so they are available to all subcommands.
-	rootCmd.PersistentFlags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
-	rootCmd.PersistentFlags().StringP(regionKey, "r", "", "Region code for provider")
+	rootCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
+	rootCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
 
-	viper.BindPFlag(providerKey, rootCmd.PersistentFlags().Lookup(providerKey))
-	viper.BindPFlag(regionKey, rootCmd.PersistentFlags().Lookup(regionKey))
+	viper.BindPFlag(providerKey, rootCmd.Flags().Lookup(providerKey))
+	viper.BindPFlag(regionKey, rootCmd.Flags().Lookup(regionKey))
 
 	// Also support environment variables.
 	viper.SetEnvPrefix("grid_intensity")
