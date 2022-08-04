@@ -25,9 +25,6 @@ func init() {
 	exporterCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 	exporterCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
 
-	viper.BindPFlag(providerKey, exporterCmd.Flags().Lookup(providerKey))
-	viper.BindPFlag(regionKey, exporterCmd.Flags().Lookup(regionKey))
-
 	rootCmd.AddCommand(exporterCmd)
 }
 
@@ -76,6 +73,10 @@ the grid is greener or at locations where carbon intensity is lower.
 
 	grid-intensity exporter --provider PROVIDER --region ARG
 	grid-intensity exporter -p Ember -r BOL`,
+		PreRun: func(cmd *cobra.Command, args []string) {
+			viper.BindPFlag(providerKey, cmd.Flags().Lookup(providerKey))
+			viper.BindPFlag(regionKey, cmd.Flags().Lookup(regionKey))
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			err := runExporter()
 			if err != nil {
