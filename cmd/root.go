@@ -38,6 +38,10 @@ grid is greener or at locations where carbon intensity is lower.
 	grid-intensity --region ARG
 	grid-intensity -r BOL`,
 
+	PreRun: func(cmd *cobra.Command, args []string) {
+		viper.BindPFlag(providerKey, cmd.Flags().Lookup(providerKey))
+		viper.BindPFlag(regionKey, cmd.Flags().Lookup(regionKey))
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		err := runRoot()
 		if err != nil {
@@ -56,9 +60,6 @@ func Execute() {
 func init() {
 	rootCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 	rootCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
-
-	viper.BindPFlag(providerKey, rootCmd.Flags().Lookup(providerKey))
-	viper.BindPFlag(regionKey, rootCmd.Flags().Lookup(regionKey))
 
 	// Also support environment variables.
 	viper.SetEnvPrefix("grid_intensity")
