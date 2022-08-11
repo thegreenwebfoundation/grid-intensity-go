@@ -1,0 +1,17 @@
+# Commands to start on workspace startup
+
+# Steps are:
+# - Compile binary
+# - Add local directory to the path
+# - Make binary executable
+# - Show help text
+tasks:
+  - init: go build -o grid-intensity
+    command: |
+      export PATH="$PATH:."
+      chmod +x grid-intensity
+      grid-intensity --help
+# Expose exporter port on workspace startup
+ports:
+  - port: 8000
+    onOpen: ignore
