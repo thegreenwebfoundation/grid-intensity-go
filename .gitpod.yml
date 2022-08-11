@@ -3,6 +3,7 @@ tasks:
   - init: go build -o grid-intensity
     command: |
       export PATH="$PATH:."
+      chmod +x grid-intensity
       grid-intensity --help
 # Ports to expose on workspace startup
 ports:
