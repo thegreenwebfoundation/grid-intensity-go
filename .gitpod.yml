@@ -1,7 +1,8 @@
 # Commands to start on workspace startup
 tasks:
   - init: go build -o grid-intensity
-    command: ./grid-intensity --help
+    command: |
+      ./grid-intensity --help
 # Ports to expose on workspace startup
 ports:
   - port: 8000
