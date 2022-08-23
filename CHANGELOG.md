@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Breaking change to refactor interface to use the same JSON format for all
+- Breaking change to refactor interface to return the same JSON format for all
 providers.
 
 ### Fixed
