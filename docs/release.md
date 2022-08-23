@@ -8,6 +8,9 @@
 git tag -a v0.1.0 -m "v0.1.0"
 ```
 
+- Once the release is created edit the description to add the changelog text.
+- Note: The release description will already have the commits added by GoReleaser.
+
 ## GoReleaser
 
 This project uses [GoReleaser](https://github.com/goreleaser/goreleaser) to publish 
