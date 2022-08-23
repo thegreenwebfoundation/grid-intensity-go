@@ -1,9 +1,11 @@
 # How to create a release
 
-Push a git tag with the version you wish to release.
+- Ensure [CHANGELOG.md](/CHANGELOG.md) is up to date.
+- Add heading with version and release date. e.g. `## 0.1.0 2022-06-21`
+- Push a git tag with the version you wish to release.
 
 ```
-git tag -a v0.1.0 -m "Initial release"
+git tag -a v0.1.0 -m "v0.1.0"
 ```
 
 ## GoReleaser
