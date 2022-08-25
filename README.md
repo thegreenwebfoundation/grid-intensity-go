@@ -72,25 +72,29 @@ The CLI allows you to interact with carbon intensity data from multiple provider
 
 ```sh
 $ grid-intensity
-Provider ember-climate.org needs an ISO country code as a region parameter.
+Provider ember-climate.org needs an ISO country code as a location parameter.
 ESP detected from your locale.
 ESP
-{
-	"country_code_iso_2": "ES",
-	"country_code_iso_3": "ESP",
-	"country_or_region": "Spain",
-	"year": 2021,
-	"latest_year": 2021,
-	"emissions_intensity_gco2_per_kwh": 193.737
-}
+[
+	{
+		"emissions_type": "average",
+		"metric_type": "absolute",
+		"provider": "Ember",
+		"location": "ESP",
+		"units": "gCO2e per kWh",
+		"valid_from": "2021-01-01T00:00:00Z",
+		"valid_to": "2021-12-31T23:59:00Z",
+		"value": 193.737
+	}
+]
 ```
 
-The `--provider` and `--region` flags allow you to select other providers and regions.
-You can also set the `GRID_INTENSITY_PROVIDER` and `GRID_INTENSITY_REGION` environment
+The `--provider` and `--location` flags allow you to select other providers and locations.
+You can also set the `GRID_INTENSITY_PROVIDER` and `GRID_INTENSITY_LOCATION` environment
 variables or edit the config file at `~/.config/grid-intensity/config.yaml`.
 
 ```sh
-$ grid-intensity --provider CarbonIntensityOrgUK --region UK
+$ grid-intensity --provider CarbonIntensityOrgUK --location UK
 {
 	"from": "2022-07-14T14:30Z",
 	"to": "2022-07-14T15:00Z",
@@ -109,8 +113,8 @@ The [providers](#providers) section shows how to configure other providers.
 The `exporter` subcommand starts the prometheus exporter on port 8000.
 
 ```sh
-$ grid-intensity exporter --provider Ember --region FR
-Using provider "Ember" with region "FR"
+$ grid-intensity exporter --provider Ember --location FR
+Using provider "Ember" with location "FR"
 Metrics available at :8000/metrics
 ```
 
@@ -118,9 +122,9 @@ View the metrics with curl.
 
 ```
 $ curl -s http://localhost:8000/metrics | grep grid
-# HELP grid_intensity_carbon_average Average carbon intensity for the electricity grid in this region.
+# HELP grid_intensity_carbon_average Average carbon intensity for the electricity grid in this location.
 # TYPE grid_intensity_carbon_average gauge
-grid_intensity_carbon_average{provider="Ember",region="FR",units="gCO2 per kWh"} 67.781
+grid_intensity_carbon_average{provider="Ember",location="FR",units="gCO2 per kWh"} 67.781
 ```
 
 ### Docker Image
@@ -138,13 +142,13 @@ Install the [helm](https://helm.sh/) chart in [/helm/grid-intensity-exporter](ht
 Needs the Docker image to be available in the cluster.
 
 ```sh
-helm install --set gridIntensity.region=FR grid-intensity-exporter helm/grid-intensity-exporter
+helm install --set gridIntensity.location=FR grid-intensity-exporter helm/grid-intensity-exporter
 ```
 
 ### Nomad
 
 Edit the Nomad job in [/nomad/grid-intensity-exporter.nomad](https://github.com/thegreenwebfoundation/grid-intensity-go/blob/main/nomad/grid-intensity-exporter.nomad) to set the
-env vars `GRID_INTENSITY_REGION` and `GRID_INTENSITY_PROVIDER`
+env vars `GRID_INTENSITY_LOCATION` and `GRID_INTENSITY_PROVIDER`
 
 Start the Nomad job. Needs the Docker image to be available in the cluster.
 
@@ -165,10 +169,10 @@ us to integrate more providers please open an [issue](https://github.com/thegree
 ### CarbonIntensity.org.uk
 
 UK Carbon Intensity API https://carbonintensity.org.uk/ this is a public API
-and the only region supported is `UK`.
+and the only location supported is `UK`.
 
 ```sh
-grid-intensity --provider=CarbonIntensityOrgUK --region=UK
+grid-intensity --provider=CarbonIntensityOrgUK --location=UK
 ```
 
 ### ElectricityMap.org
@@ -177,11 +181,11 @@ grid-intensity --provider=CarbonIntensityOrgUK --region=UK
 from multiple sources. You need an [API token](https://static.electricitymap.org/api/docs/index.html#authentication)
 to use the API.
 
-The `region` parameter needs to be set to a zone present in the public [zones](https://static.electricitymap.org/api/docs/index.html#zones) endpoint.
+The `location` parameter needs to be set to a zone present in the public [zones](https://static.electricitymap.org/api/docs/index.html#zones) endpoint.
 
 ```sh
 ELECTRICITY_MAP_API_TOKEN=your-token \
-grid-intensity --provider=ElectricityMap --region=IN-KA
+grid-intensity --provider=ElectricityMap --location=IN-KA
 ```
 
 ### Ember-Climate.org
@@ -190,22 +194,22 @@ Carbon intensity data from [Ember](https://ember-climate.org/), is embedded in t
 in accordance with their licensing - [CC-BY-SA 4.0](https://ember-climate.org/creative-commons/)
 
 ```sh
-grid-intensity --provider=Ember --region=DE
+grid-intensity --provider=Ember --location=DE
 ```
 
-The `region` parameter should be set to a 2 or 3 char ISO country code.
+The `location` parameter should be set to a 2 or 3 char ISO country code.
 
 ### WattTime.org
 
 [WattTime](https://www.watttime.org/) have carbon intensity data from multiple sources.
 You need to [register](https://www.watttime.org/api-documentation/#authentication) to use the API.
 
-The `region` parameter should be set to a supported region. The `/ba-from-loc`
+The `location` parameter should be set to a supported location. The `/ba-from-loc`
 endpoint allows you to provide a latitude and longitude. See the [docs](https://www.watttime.org/api-documentation/#determine-grid-region) for more details.
 
 
 ```sh
 WATT_TIME_USER=your-user \
 WATT_TIME_PASSWORD=your-password \
-grid-intensity --provider=WattTime --region=CAISO_NORTH
+grid-intensity --provider=WattTime --location=CAISO_NORTH
 ```

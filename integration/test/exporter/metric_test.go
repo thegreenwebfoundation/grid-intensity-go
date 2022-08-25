@@ -48,7 +48,7 @@ func Test_GridIntensityMetric(t *testing.T) {
 		t.Fatalf("expected nil got %v", err)
 	}
 
-	expectedMetricText := "grid_intensity_carbon_average{provider=\"Ember\",region=\"GBR\",units=\"gCO2e per kWh\"}"
+	expectedMetricText := "grid_intensity_carbon_average{location=\"GBR\",provider=\"Ember\",units=\"gCO2e per kWh\"}"
 
 	if !strings.Contains(metrics, expectedMetricText) {
 		t.Fatalf("expected metric text %q not found got %q", expectedMetricText, metrics)

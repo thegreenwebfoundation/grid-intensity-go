@@ -51,9 +51,9 @@ func readConfig() (string, string, error) {
 	}
 
 	providerName := viper.GetString(providerKey)
-	regionCode := viper.GetString(regionKey)
+	locationCode := viper.GetString(locationKey)
 
-	return providerName, regionCode, nil
+	return providerName, locationCode, nil
 }
 
 func writeConfig() error {

@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ErrInvalidRegion              error = errors.New("region is not supported by this provider")
+	ErrInvalidLocation            error = errors.New("location is not supported by this provider")
 	ErrNoMarginalIntensityPresent error = errors.New("no marginal intensity present")
 	ErrNoRelativeIntensityPresent error = errors.New("no relative intensity present")
 	ErrNoResponse                 error = errors.New("no data was received in response, try again later")

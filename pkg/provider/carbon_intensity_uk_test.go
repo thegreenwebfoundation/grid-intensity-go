@@ -51,7 +51,7 @@ func Test_CarbonIntensityUK_SimpleRequest(t *testing.T) {
 			Provider:      "CarbonIntensityOrgUK",
 			EmissionsType: "average",
 			MetricType:    "absolute",
-			Region:        "UK",
+			Location:      "UK",
 			Units:         "gCO2e per kWh",
 			ValidFrom:     time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 			ValidTo:       time.Date(2020, 1, 1, 0, 30, 0, 0, time.UTC),

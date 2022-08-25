@@ -5,5 +5,5 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
 data:
+  gridIntensityLocation: {{ .Values.gridIntensity.location | quote }}
   gridIntensityProvider: {{ .Values.gridIntensity.provider | quote }}
-  gridIntensityRegion: {{ .Values.gridIntensity.region | quote }}

@@ -39,8 +39,8 @@ func NewElectricityMap(config ElectricityMapConfig) (Interface, error) {
 	return c, nil
 }
 
-func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, region string) ([]CarbonIntensity, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, e.intensityURLWithZone(region), nil)
+func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, e.intensityURLWithZone(location), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, region st
 			EmissionsType: AverageEmissionsType,
 			MetricType:    AbsoluteMetricType,
 			Provider:      ElectricityMap,
-			Region:        region,
+			Location:      location,
 			Units:         GramsCO2EPerkWh,
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,
