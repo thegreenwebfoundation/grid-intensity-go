@@ -57,8 +57,8 @@ func NewWattTime(config WattTimeConfig) (Interface, error) {
 	return w, nil
 }
 
-func (w *WattTimeClient) GetCarbonIntensity(ctx context.Context, region string) ([]CarbonIntensity, error) {
-	result, err := w.fetchCarbonIntensityData(ctx, region)
+func (w *WattTimeClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
+	result, err := w.fetchCarbonIntensityData(ctx, location)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +66,8 @@ func (w *WattTimeClient) GetCarbonIntensity(ctx context.Context, region string) 
 	return result, nil
 }
 
-func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, region string) ([]CarbonIntensity, error) {
-	result, err := w.cache.getCacheData(ctx, region)
+func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, location string) ([]CarbonIntensity, error) {
+	result, err := w.cache.getCacheData(ctx, location)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, region st
 		w.token = token
 	}
 
-	indexData, err := w.getCarbonIntensityData(ctx, region)
+	indexData, err := w.getCarbonIntensityData(ctx, location)
 	if errors.Is(err, ErrReceived403Forbidden) {
 		token, err := w.getAccessToken(ctx)
 		if err != nil {
@@ -91,7 +91,7 @@ func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, region st
 		}
 		w.token = token
 
-		indexData, err = w.getCarbonIntensityData(ctx, region)
+		indexData, err = w.getCarbonIntensityData(ctx, location)
 		if err != nil {
 			return nil, err
 		}
@@ -99,12 +99,12 @@ func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, region st
 		return nil, err
 	}
 
-	result, ttl, err := parseCarbonIntensityData(ctx, region, indexData)
+	result, ttl, err := parseCarbonIntensityData(ctx, location, indexData)
 	if err != nil {
 		return nil, err
 	}
 
-	err = w.cache.setCacheData(ctx, region, result, ttl)
+	err = w.cache.setCacheData(ctx, location, result, ttl)
 	if err != nil {
 		return nil, err
 	}
@@ -142,8 +142,8 @@ func (w *WattTimeClient) getAccessToken(ctx context.Context) (string, error) {
 	return loginResp.Token, nil
 }
 
-func (w *WattTimeClient) getCarbonIntensityData(ctx context.Context, region string) (*wattTimeIndexData, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, w.indexURL(region), nil)
+func (w *WattTimeClient) getCarbonIntensityData(ctx context.Context, location string) (*wattTimeIndexData, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, w.indexURL(location), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -175,15 +175,15 @@ func (w *WattTimeClient) getCarbonIntensityData(ctx context.Context, region stri
 	return &indexData, nil
 }
 
-func (w *WattTimeClient) indexURL(region string) string {
-	return fmt.Sprintf("%s/index?ba=%s", w.apiURL, region)
+func (w *WattTimeClient) indexURL(location string) string {
+	return fmt.Sprintf("%s/index?ba=%s", w.apiURL, location)
 }
 
 func (w *WattTimeClient) loginURL() string {
 	return fmt.Sprintf("%s/login", w.apiURL)
 }
 
-func parseCarbonIntensityData(ctx context.Context, region string, indexData *wattTimeIndexData) ([]CarbonIntensity, time.Time, error) {
+func parseCarbonIntensityData(ctx context.Context, location string, indexData *wattTimeIndexData) ([]CarbonIntensity, time.Time, error) {
 	freq, err := strconv.ParseInt(indexData.Freq, 0, 64)
 	if err != nil {
 		return nil, time.Time{}, err
@@ -211,7 +211,7 @@ func parseCarbonIntensityData(ctx context.Context, region string, indexData *wat
 			EmissionsType: MarginalEmissionsType,
 			MetricType:    RelativeMetricType,
 			Provider:      WattTime,
-			Region:        region,
+			Location:      location,
 			Units:         Percent,
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,
@@ -229,7 +229,7 @@ func parseCarbonIntensityData(ctx context.Context, region string, indexData *wat
 			EmissionsType: MarginalEmissionsType,
 			MetricType:    AbsoluteMetricType,
 			Provider:      WattTime,
-			Region:        region,
+			Location:      location,
 			Units:         LbCO2EPerMWh,
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,

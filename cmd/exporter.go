@@ -15,15 +15,15 @@ import (
 )
 
 const (
+	labelLocation = "location"
 	labelProvider = "provider"
-	labelRegion   = "region"
 	labelUnits    = "units"
 	namespace     = "grid_intensity"
 )
 
 func init() {
+	exporterCmd.Flags().StringP(locationKey, "l", "", "Location code for provider")
 	exporterCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
-	exporterCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
 
 	rootCmd.AddCommand(exporterCmd)
 }
@@ -31,10 +31,10 @@ func init() {
 var (
 	averageDesc = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "carbon", "average"),
-		"Average carbon intensity for the electricity grid in this region.",
+		"Average carbon intensity for the electricity grid in this location.",
 		[]string{
+			labelLocation,
 			labelProvider,
-			labelRegion,
 			labelUnits,
 		},
 		nil,
@@ -42,10 +42,10 @@ var (
 
 	marginalDesc = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "carbon", "marginal"),
-		"Marginal carbon intensity for the electricity grid in this region.",
+		"Marginal carbon intensity for the electricity grid in this location.",
 		[]string{
+			labelLocation,
 			labelProvider,
-			labelRegion,
 			labelUnits,
 		},
 		nil,
@@ -53,10 +53,10 @@ var (
 
 	relativeDesc = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "carbon", "relative"),
-		"Relative carbon intensity for the electricity grid in this region.",
+		"Relative carbon intensity for the electricity grid in this location.",
 		[]string{
+			labelLocation,
 			labelProvider,
-			labelRegion,
 			labelUnits,
 		},
 		nil,
@@ -71,11 +71,11 @@ electricity grids.
 This can be used to make your software carbon aware so it runs at times when
 the grid is greener or at locations where carbon intensity is lower.
 
-	grid-intensity exporter --provider PROVIDER --region ARG
-	grid-intensity exporter -p Ember -r BOL`,
+	grid-intensity exporter --provider Ember --location ARG
+	grid-intensity exporter -p Ember -l BOL`,
 		PreRun: func(cmd *cobra.Command, args []string) {
 			viper.BindPFlag(providerKey, cmd.Flags().Lookup(providerKey))
-			viper.BindPFlag(regionKey, cmd.Flags().Lookup(regionKey))
+			viper.BindPFlag(locationKey, cmd.Flags().Lookup(locationKey))
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			err := runExporter()
@@ -88,16 +88,16 @@ the grid is greener or at locations where carbon intensity is lower.
 
 type Exporter struct {
 	client   provider.Interface
+	location string
 	provider string
-	region   string
 }
 
-func NewExporter(providerName, regionName string) (*Exporter, error) {
+func NewExporter(providerName, locationName string) (*Exporter, error) {
 	var client provider.Interface
 	var err error
 
-	if regionName == "" {
-		return nil, fmt.Errorf("region must be set")
+	if locationName == "" {
+		return nil, fmt.Errorf("location must be set")
 	}
 
 	// Cache filename is empty so we use in-memory cache.
@@ -108,8 +108,8 @@ func NewExporter(providerName, regionName string) (*Exporter, error) {
 
 	e := &Exporter{
 		client:   client,
+		location: locationName,
 		provider: providerName,
-		region:   regionName,
 	}
 
 	return e, nil
@@ -119,7 +119,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
 	if e.provider == provider.WattTime {
-		result, err := e.client.GetCarbonIntensity(ctx, e.region)
+		result, err := e.client.GetCarbonIntensity(ctx, e.location)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
 		}
@@ -130,8 +130,8 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 					marginalDesc,
 					prometheus.GaugeValue,
 					data.Value,
+					data.Location,
 					data.Provider,
-					data.Region,
 					data.Units,
 				)
 			}
@@ -140,14 +140,14 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 					relativeDesc,
 					prometheus.GaugeValue,
 					data.Value,
+					data.Location,
 					data.Provider,
-					data.Region,
 					data.Units,
 				)
 			}
 		}
 	} else {
-		result, err := e.client.GetCarbonIntensity(ctx, e.region)
+		result, err := e.client.GetCarbonIntensity(ctx, e.location)
 		if err != nil {
 			log.Printf("failed to get carbon intensity %#v", err)
 		}
@@ -157,8 +157,8 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			averageDesc,
 			prometheus.GaugeValue,
 			averageIntensity.Value,
+			averageIntensity.Location,
 			averageIntensity.Provider,
-			averageIntensity.Region,
 			averageIntensity.Units,
 		)
 	}
@@ -174,12 +174,12 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func runExporter() error {
-	providerName, regionCode, err := readConfig()
+	providerName, locationCode, err := readConfig()
 	if err != nil {
 		return err
 	}
 
-	exporter, err := NewExporter(providerName, regionCode)
+	exporter, err := NewExporter(providerName, locationCode)
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func runExporter() error {
 		return err
 	}
 
-	fmt.Printf("Using provider %q with region %q\n", providerName, regionCode)
+	fmt.Printf("Using provider %q with location %q\n", providerName, locationCode)
 	fmt.Println("Metrics available at :8000/metrics")
 
 	prometheus.MustRegister(exporter)

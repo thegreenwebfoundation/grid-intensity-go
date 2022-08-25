@@ -14,19 +14,19 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		region      string
+		location    string
 		result      []CarbonIntensity
 		expectedErr string
 	}{
 		{
-			name:   "country exists",
-			region: "ESP",
+			name:     "country exists",
+			location: "ESP",
 			result: []CarbonIntensity{
 				{
 					EmissionsType: "average",
 					MetricType:    "absolute",
 					Provider:      "Ember",
-					Region:        "ESP",
+					Location:      "ESP",
 					Units:         "gCO2e per kWh",
 					ValidFrom:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 					ValidTo:       time.Date(2021, 12, 31, 23, 59, 0, 0, time.UTC),
@@ -35,14 +35,14 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 			},
 		},
 		{
-			name:   "2 char country code",
-			region: "ES",
+			name:     "2 char country code",
+			location: "ES",
 			result: []CarbonIntensity{
 				{
 					EmissionsType: "average",
 					MetricType:    "absolute",
 					Provider:      "Ember",
-					Region:        "ES",
+					Location:      "ES",
 					Units:         "gCO2e per kWh",
 					ValidFrom:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 					ValidTo:       time.Date(2021, 12, 31, 23, 59, 0, 0, time.UTC),
@@ -51,14 +51,14 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 			},
 		},
 		{
-			name:   "lower case country code",
-			region: "gbr",
+			name:     "lower case country code",
+			location: "gbr",
 			result: []CarbonIntensity{
 				{
 					EmissionsType: "average",
 					MetricType:    "absolute",
 					Provider:      "Ember",
-					Region:        "GBR",
+					Location:      "GBR",
 					Units:         "gCO2e per kWh",
 					ValidFrom:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 					ValidTo:       time.Date(2021, 12, 31, 23, 59, 0, 0, time.UTC),
@@ -68,8 +68,8 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 		},
 		{
 			name:        "invalid country code",
-			region:      "AAA",
-			expectedErr: "region \"AAA\" not found",
+			location:    "AAA",
+			expectedErr: "location \"AAA\" not found",
 		},
 	}
 
@@ -81,7 +81,7 @@ func Test_GetGridIntensityForCountry(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			result, err := p.GetCarbonIntensity(ctx, tc.region)
+			result, err := p.GetCarbonIntensity(ctx, tc.location)
 			switch {
 			case err != nil && tc.expectedErr == "":
 				t.Fatalf("error == %#v want nil", err)

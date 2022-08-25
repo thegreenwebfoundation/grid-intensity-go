@@ -21,8 +21,8 @@ const (
 	cacheDir              = ".cache/grid-intensity"
 	configDir             = ".config/grid-intensity"
 	configFileName        = "config.yaml"
+	locationKey           = "location"
 	providerKey           = "provider"
-	regionKey             = "region"
 	wattTimeCacheFileName = "watttime.org.json"
 )
 
@@ -35,12 +35,12 @@ var rootCmd = &cobra.Command{
 This can be used to make your software carbon aware so it runs at times when the
 grid is greener or at locations where carbon intensity is lower.
 
-	grid-intensity --region ARG
-	grid-intensity -r BOL`,
+	grid-intensity --provider Ember --location ARG
+	grid-intensity -p Ember -l BOL`,
 
 	PreRun: func(cmd *cobra.Command, args []string) {
+		viper.BindPFlag(locationKey, cmd.Flags().Lookup(locationKey))
 		viper.BindPFlag(providerKey, cmd.Flags().Lookup(providerKey))
-		viper.BindPFlag(regionKey, cmd.Flags().Lookup(regionKey))
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		err := runRoot()
@@ -58,13 +58,13 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Flags().StringP(locationKey, "l", "", "Location code for provider")
 	rootCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
-	rootCmd.Flags().StringP(regionKey, "r", "", "Region code for provider")
 
 	// Also support environment variables.
 	viper.SetEnvPrefix("grid_intensity")
+	viper.BindEnv(locationKey)
 	viper.BindEnv(providerKey)
-	viper.BindEnv(regionKey)
 }
 
 // getCountryCode prompts the user to enter a country code. We try to detect
@@ -78,7 +78,7 @@ func getCountryCode() (string, error) {
 	region, _ := tag.Region()
 	country := region.ISO3()
 
-	fmt.Printf("Provider %s needs an ISO country code as a region parameter.\n", provider.Ember)
+	fmt.Printf("Provider %s needs an ISO country code as a location parameter.\n", provider.Ember)
 	if country != "" {
 		fmt.Printf("%s detected from your locale.\n", country)
 	}
@@ -95,7 +95,7 @@ func getCountryCode() (string, error) {
 func runRoot() error {
 	ctx := context.Background()
 
-	providerName, regionCode, err := readConfig()
+	providerName, locationCode, err := readConfig()
 	if err != nil {
 		return fmt.Errorf("could not read config, %w", err)
 	}
@@ -104,20 +104,20 @@ func runRoot() error {
 
 	switch providerName {
 	case provider.CarbonIntensityOrgUK:
-		if regionCode == "" {
-			regionCode = "UK"
+		if locationCode == "" {
+			locationCode = "UK"
 		}
-		if regionCode != "UK" {
-			return fmt.Errorf("only region UK is supported")
+		if locationCode != "UK" {
+			return fmt.Errorf("only location UK is supported")
 		}
-		viper.Set(regionKey, regionCode)
+		viper.Set(locationKey, locationCode)
 	case provider.Ember:
-		if regionCode == "" {
-			regionCode, err = getCountryCode()
+		if locationCode == "" {
+			locationCode, err = getCountryCode()
 			if err != nil {
 				return err
 			}
-			viper.Set(regionKey, regionCode)
+			viper.Set(locationKey, locationCode)
 		}
 	case provider.WattTime:
 		homeDir, err := os.UserHomeDir()
@@ -133,7 +133,7 @@ func runRoot() error {
 		return fmt.Errorf("could not get client, %w", err)
 	}
 
-	res, err := client.GetCarbonIntensity(ctx, regionCode)
+	res, err := client.GetCarbonIntensity(ctx, locationCode)
 	if err != nil {
 		return fmt.Errorf("could not get carbon intensity, %w", err)
 	}

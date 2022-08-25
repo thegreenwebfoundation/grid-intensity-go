@@ -30,7 +30,7 @@ type CarbonIntensity struct {
 	EmissionsType string    `json:"emissions_type"`
 	MetricType    string    `json:"metric_type"`
 	Provider      string    `json:"provider"`
-	Region        string    `json:"region"`
+	Location      string    `json:"location"`
 	Units         string    `json:"units"`
 	ValidFrom     time.Time `json:"valid_from"`
 	ValidTo       time.Time `json:"valid_to"`
@@ -43,7 +43,7 @@ type Details struct {
 }
 
 type Interface interface {
-	GetCarbonIntensity(ctx context.Context, region string) ([]CarbonIntensity, error)
+	GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error)
 }
 
 func GetProviderDetails() []Details {

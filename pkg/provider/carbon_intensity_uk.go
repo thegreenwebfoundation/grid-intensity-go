@@ -35,9 +35,9 @@ func NewCarbonIntensityUK(config CarbonIntensityUKConfig) (Interface, error) {
 	return c, nil
 }
 
-func (a *CarbonIntensityUKClient) GetCarbonIntensity(ctx context.Context, region string) ([]CarbonIntensity, error) {
-	if region != "UK" {
-		return nil, ErrInvalidRegion
+func (a *CarbonIntensityUKClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
+	if location != "UK" {
+		return nil, ErrInvalidLocation
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, a.apiURL, nil)
@@ -85,7 +85,7 @@ func (a *CarbonIntensityUKClient) GetCarbonIntensity(ctx context.Context, region
 			EmissionsType: AverageEmissionsType,
 			MetricType:    AbsoluteMetricType,
 			Provider:      CarbonIntensityOrgUK,
-			Region:        region,
+			Location:      location,
 			Units:         GramsCO2EPerkWh,
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,

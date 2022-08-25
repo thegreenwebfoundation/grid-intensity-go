@@ -30,11 +30,11 @@ func NewEmber() (Interface, error) {
 	return c, nil
 }
 
-func (a *EmberClient) GetCarbonIntensity(ctx context.Context, region string) ([]CarbonIntensity, error) {
-	region = strings.ToUpper(region)
-	result, ok := a.data[region]
+func (a *EmberClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
+	location = strings.ToUpper(location)
+	result, ok := a.data[location]
 	if !ok {
-		return nil, fmt.Errorf("region %q not found", region)
+		return nil, fmt.Errorf("location %q not found", location)
 	}
 
 	validFrom := time.Date(emberDataYear, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -45,7 +45,7 @@ func (a *EmberClient) GetCarbonIntensity(ctx context.Context, region string) ([]
 			EmissionsType: AverageEmissionsType,
 			MetricType:    AbsoluteMetricType,
 			Provider:      Ember,
-			Region:        region,
+			Location:      location,
 			Units:         GramsCO2EPerkWh,
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,

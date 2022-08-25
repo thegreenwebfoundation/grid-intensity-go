@@ -35,8 +35,8 @@ job "grid-intensity-exporter" {
       }
 
       env {
+        GRID_INTENSITY_LOCATION = "GBR"
         GRID_INTENSITY_PROVIDER = "Ember"
-        GRID_INTENSITY_REGION = "GBR"
       }
     }
   }
