@@ -95,9 +95,13 @@ func getCountryCode() (string, error) {
 func runRoot() error {
 	ctx := context.Background()
 
-	providerName, locationCode, err := readConfig()
+	providerName, err := readConfig(providerKey)
 	if err != nil {
-		return fmt.Errorf("could not read config, %w", err)
+		return fmt.Errorf("could not read config for %#q, %w", providerKey, err)
+	}
+	locationCode, err := readConfig(locationKey)
+	if err != nil {
+		return fmt.Errorf("could not read config for %#q, %w", locationKey, err)
 	}
 
 	var cacheFile string

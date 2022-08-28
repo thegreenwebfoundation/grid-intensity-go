@@ -2,6 +2,8 @@ name: kubernetes-integration-test
 on: [push]
 jobs:
   kubernetes-integration-test:
+    env:
+      TEST_PLATFORM: kubernetes
     runs-on: ubuntu-latest
     steps:
       - 

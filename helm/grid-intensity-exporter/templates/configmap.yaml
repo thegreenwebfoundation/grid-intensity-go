@@ -7,3 +7,7 @@ metadata:
 data:
   gridIntensityLocation: {{ .Values.gridIntensity.location | quote }}
   gridIntensityProvider: {{ .Values.gridIntensity.provider | quote }}
+  {{- if .Values.gridIntensity.region }}
+  gridIntensityRegion: {{ .Values.gridIntensity.region | quote }}
+  {{- end }}
+
