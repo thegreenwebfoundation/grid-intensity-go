@@ -54,7 +54,7 @@ func Test_GridIntensityMetric(t *testing.T) {
 	var node, region string
 
 	if platform == "kubernetes" {
-		node = "kind-control-plane"
+		node = "chart-testing-control-plane"
 	} else if platform == "nomad" {
 		node = "dev01"
 		region = "global"
