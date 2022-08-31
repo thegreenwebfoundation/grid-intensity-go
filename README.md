@@ -11,6 +11,10 @@ The tool has 3 components.
 Docker, Nomad, or Kubernetes.
 - A Go library that can be integrated into your Go code.
 
+## Changelog
+
+See [CHANGELOG.md](/CHANGELOG.md).
+
 ## Background
 
 We know that the internet runs on electricity. That electricity comes from a mix of energy sources, including wind and solar, nuclear power, biomass, fossil gas, oil and coal and so on,
