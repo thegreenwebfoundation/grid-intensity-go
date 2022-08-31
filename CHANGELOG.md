@@ -14,10 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.4.0 2022-08-31
+
+### Added
+
+- Add node and region labels to prometheus exporter for carbon aware scheduling.
+
 ### Changed
 
 - Breaking change to refactor interface to return the same JSON format for all
 providers.
+- Breaking change to rename region to location since region has a different meaning
+in Nomad and Kubernetes.
 
 ### Fixed
 
