@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add node and region labels to prometheus exporter for carbon aware scheduling.
+- Add node and region labels to prometheus metrics for carbon aware scheduling.
 
 ### Changed
 
