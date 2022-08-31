@@ -35,10 +35,10 @@ func configFileExists(configFile string) (bool, error) {
 	return false, err
 }
 
-func readConfig() (string, string, error) {
+func readConfig(key string) (string, error) {
 	configFile, err := getConfigFile()
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	viper.SetConfigFile(configFile)
@@ -47,13 +47,11 @@ func readConfig() (string, string, error) {
 	if errors.Is(err, os.ErrNotExist) {
 		// Config file may not be available e.g. when running as a container.
 	} else if err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	providerName := viper.GetString(providerKey)
-	locationCode := viper.GetString(locationKey)
-
-	return providerName, locationCode, nil
+	value := viper.GetString(key)
+	return value, nil
 }
 
 func writeConfig() error {

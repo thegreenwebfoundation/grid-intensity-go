@@ -2,6 +2,7 @@
 gridIntensity:
   provider: Ember
   location: GBR
+  region: # Set to label metrics with cloud provider region.
 
 image:
   repository: thegreenwebfoundation/grid-intensity

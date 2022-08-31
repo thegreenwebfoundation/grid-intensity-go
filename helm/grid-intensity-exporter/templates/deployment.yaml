@@ -34,6 +34,17 @@ spec:
             configMapKeyRef:
               name: {{ .Release.Name }}
               key: gridIntensityLocation
+        - name: GRID_INTENSITY_NODE
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        {{- if .Values.gridIntensity.region }}
+        - name: GRID_INTENSITY_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}
+              key: gridIntensityRegion
+        {{- end }}
         {{- if .Values.electricityMap }}
         {{- if .Values.electricityMap.apiToken }}
         - name: ELECTRICITY_MAP_API_TOKEN

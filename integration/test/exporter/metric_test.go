@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -48,7 +49,19 @@ func Test_GridIntensityMetric(t *testing.T) {
 		t.Fatalf("expected nil got %v", err)
 	}
 
-	expectedMetricText := "grid_intensity_carbon_average{location=\"GBR\",provider=\"Ember\",units=\"gCO2e per kWh\"}"
+	platform := os.Getenv("TEST_PLATFORM")
+
+	var node, region string
+
+	if platform == "kubernetes" {
+		node = "chart-testing-control-plane"
+	} else if platform == "nomad" {
+		node = "dev01"
+		region = "global"
+	}
+
+	expectedMetricText := fmt.Sprintf("grid_intensity_carbon_average{location=\"GBR\",node=\"%s\",provider=\"Ember\",region=\"%s\",units=\"gCO2e per kWh\"}",
+		node, region)
 
 	if !strings.Contains(metrics, expectedMetricText) {
 		t.Fatalf("expected metric text %q not found got %q", expectedMetricText, metrics)
