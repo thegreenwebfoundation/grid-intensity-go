@@ -41,6 +41,7 @@ func NewElectricityMap(config ElectricityMapConfig) (Interface, error) {
 
 func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, e.intensityURLWithZone(location), nil)
+	req.Header.Add("auth-token", e.token)
 	if err != nil {
 		return nil, err
 	}
