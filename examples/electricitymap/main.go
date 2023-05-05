@@ -24,7 +24,7 @@ func main() {
 		log.Fatalln("could not make provider", err)
 	}
 
-	res, err := e.GetCarbonIntensity(context.Background(), "IN-KA")
+	res, err := e.GetCarbonIntensity(context.Background(), "AU-SA")
 	if err != nil {
 		log.Fatalln("could not get carbon intensity", err)
 	}
