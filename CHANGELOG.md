@@ -20,7 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.4.1 2023-05-05
 
-- Fix: Add `auth-token` header to Electricity Maps request.
+### Fixed
+
+- Add `auth-token` header to Electricity Maps request.
 
 ## 0.4.0 2022-08-31
 
