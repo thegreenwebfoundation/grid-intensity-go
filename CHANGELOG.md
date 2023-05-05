@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Push container image to scaleway registry.
 
+## 0.4.1 2023-05-05
+
+- Fix: Add `auth-token` header to Electricity Maps request.
+
 ## 0.4.0 2022-08-31
 
 ### Added
@@ -53,7 +57,7 @@ in Nomad and Kubernetes.
 ### Added
 
 - Add install script.
-- Add Ember support to exporter. 
+- Add Ember support to exporter.
 
 ## 0.1.0 2022-06-21
 
