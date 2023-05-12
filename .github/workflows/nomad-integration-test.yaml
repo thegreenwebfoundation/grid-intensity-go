@@ -20,7 +20,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
       -
         name: Docker build
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           load: true
@@ -36,7 +36,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install nomad
       -
         name: Start running nomad in agent mode, then background it
-        run: nomad agent --dev --node dev01 &
+        run: sudo nomad agent --dev --node dev01 &
       -
         name: Submit the grid-intensity-exporter.nomad job to nomad
         run: nomad run ./nomad/grid-intensity-exporter.nomad
