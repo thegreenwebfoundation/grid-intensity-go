@@ -5,6 +5,7 @@ jobs:
     env:
       TEST_PLATFORM: nomad
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       -
         name: Checkout code
@@ -36,7 +37,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install nomad
       -
         name: Start running nomad in agent mode, then background it
-        run: nomad agent --dev --node dev01 &
+        run: sudo nomad agent --dev --node dev01 &
       -
         name: Submit the grid-intensity-exporter.nomad job to nomad
         run: nomad run ./nomad/grid-intensity-exporter.nomad
