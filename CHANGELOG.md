@@ -18,9 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Push container image to scaleway registry.
 
+
+### Changed
+
+- Update go version to 1.20, go module versions and github actions.
+
 ### Fixed
 
 - Fix nomad integration test by using sudo to run agent.
+
 
 ## 0.4.1 2023-05-05
 
