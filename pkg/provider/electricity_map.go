@@ -61,14 +61,11 @@ func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location 
 		return nil, err
 	}
 
-	validFrom, err := time.Parse(time.RFC3339Nano, data.UpdatedAt)
+	validFrom, err := time.Parse(time.RFC3339Nano, data.DateTime)
 	if err != nil {
 		return nil, err
 	}
-	validTo, err := time.Parse(time.RFC3339Nano, data.DateTime)
-	if err != nil {
-		return nil, err
-	}
+	validTo := validFrom.Add(60 * time.Minute)
 
 	return []CarbonIntensity{
 		{
