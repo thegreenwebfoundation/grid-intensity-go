@@ -19,6 +19,10 @@ func main() {
 	c := provider.ElectricityMapConfig{
 		Token: token,
 	}
+	url := os.Getenv("ELECTRICITY_MAP_API_URL")
+	if url != "" {
+		c.APIURL = url
+	}
 	e, err := provider.NewElectricityMap(c)
 	if err != nil {
 		log.Fatalln("could not make provider", err)
