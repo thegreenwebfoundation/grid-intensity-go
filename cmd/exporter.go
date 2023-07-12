@@ -150,54 +150,27 @@ func NewExporter(config ExporterConfig) (*Exporter, error) {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
-	if e.provider == provider.WattTime {
-		result, err := e.client.GetCarbonIntensity(ctx, e.location)
+	result, err := e.client.GetCarbonIntensity(ctx, e.location)
+	if err != nil {
+		log.Printf("failed to get carbon intensity %#v", err)
+	}
+
+	for _, data := range result {
+		desc, err := getMetricDesc(data)
 		if err != nil {
-			log.Printf("failed to get carbon intensity %#v", err)
+			log.Printf("failed to get metric description %#v", err)
+			continue
 		}
 
-		for _, data := range result {
-			if data.MetricType == provider.AbsoluteMetricType {
-				ch <- prometheus.MustNewConstMetric(
-					marginalDesc,
-					prometheus.GaugeValue,
-					data.Value,
-					data.Location,
-					e.node,
-					data.Provider,
-					e.region,
-					data.Units,
-				)
-			}
-			if data.MetricType == provider.RelativeMetricType {
-				ch <- prometheus.MustNewConstMetric(
-					relativeDesc,
-					prometheus.GaugeValue,
-					data.Value,
-					data.Location,
-					e.node,
-					data.Provider,
-					e.region,
-					data.Units,
-				)
-			}
-		}
-	} else {
-		result, err := e.client.GetCarbonIntensity(ctx, e.location)
-		if err != nil {
-			log.Printf("failed to get carbon intensity %#v", err)
-		}
-
-		averageIntensity := result[0]
 		ch <- prometheus.MustNewConstMetric(
-			averageDesc,
+			desc,
 			prometheus.GaugeValue,
-			averageIntensity.Value,
-			averageIntensity.Location,
+			data.Value,
+			data.Location,
 			e.node,
-			averageIntensity.Provider,
+			data.Provider,
 			e.region,
-			averageIntensity.Units,
+			data.Units,
 		)
 	}
 }
@@ -209,6 +182,24 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	} else {
 		ch <- averageDesc
 	}
+}
+
+func getMetricDesc(data provider.CarbonIntensity) (*prometheus.Desc, error) {
+	switch data.MetricType {
+	case provider.AbsoluteMetricType:
+		switch data.EmissionsType {
+		case provider.AverageEmissionsType:
+			return averageDesc, nil
+		case provider.MarginalEmissionsType:
+			return marginalDesc, nil
+		default:
+			return nil, fmt.Errorf("unknown emissions type %s", data.EmissionsType)
+		}
+	case provider.RelativeMetricType:
+		return relativeDesc, nil
+	}
+
+	return nil, fmt.Errorf("unknown metric type %s", data.MetricType)
 }
 
 func runExporter() error {
