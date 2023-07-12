@@ -53,6 +53,13 @@ spec:
               name: {{ .Release.Name }}
               key: apiToken
         {{- end }}
+        {{- if .Values.electricityMap.apiURL }}
+        - name: ELECTRICITY_MAP_API_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: apiURL
+        {{- end }}
         {{- end }}
         {{- if .Values.wattTime }}
         {{- if .Values.wattTime.apiUser }}
