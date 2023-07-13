@@ -14,10 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.5.0 2023-05-05
+
 ### Added
 
 - Push container image to scaleway registry.
-
+- Support Electricity Maps free tier.
 
 ### Changed
 
@@ -26,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix nomad integration test by using sudo to run agent.
-
 
 ## 0.4.1 2023-05-05
 
