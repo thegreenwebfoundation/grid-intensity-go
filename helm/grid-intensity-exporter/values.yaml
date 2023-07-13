@@ -34,6 +34,7 @@ image:
 #
 # electricityMap:
 #   apiToken: your-api-key
+#   apiURL: https://api-access.electricitymaps.com/free-tier/
 
 # To register an API user see https://www.watttime.org/api-documentation/#authentication
 #

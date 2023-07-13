@@ -23,9 +23,14 @@ func getClient(providerName string, cacheFile string) (provider.Interface, error
 		if token == "" {
 			return nil, fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
 		}
+		url := os.Getenv(electricityMapAPIURLEnvVar)
+		if token == "" {
+			return nil, fmt.Errorf("%q env var must be set", electricityMapAPIURLEnvVar)
+		}
 
 		c := provider.ElectricityMapConfig{
-			Token: token,
+			APIURL: url,
+			Token:  token,
 		}
 		client, err = provider.NewElectricityMap(c)
 		if err != nil {
