@@ -15,13 +15,14 @@ func main() {
 	if token == "" {
 		log.Fatalln("please set the env variable `ELECTRICITY_MAP_API_TOKEN`")
 	}
-
-	c := provider.ElectricityMapConfig{
-		Token: token,
-	}
 	url := os.Getenv("ELECTRICITY_MAP_API_URL")
 	if url != "" {
-		c.APIURL = url
+		log.Fatalln("please set the env variable `ELECTRICITY_MAP_API_URL`")
+	}
+
+	c := provider.ElectricityMapConfig{
+		APIURL: url,
+		Token:  token,
 	}
 	e, err := provider.NewElectricityMap(c)
 	if err != nil {
