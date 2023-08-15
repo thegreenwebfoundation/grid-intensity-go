@@ -166,16 +166,7 @@ directory for examples of how to integrate each provider.
 Currently these providers of carbon intensity data are integrated. If you would like
 us to integrate more providers please open an [issue](https://github.com/thegreenwebfoundation/grid-intensity-go/issues).
 
-### CarbonIntensity.org.uk
-
-UK Carbon Intensity API https://carbonintensity.org.uk/ this is a public API
-and the only location supported is `UK`.
-
-```sh
-grid-intensity --provider=CarbonIntensityOrgUK --location=UK
-```
-
-### ElectricityMap.org
+### Electricity Maps
 
 [Electricity Map](https://app.electricitymaps.com/map) have carbon intensity data
 from multiple sources. You need to get an API token and URL from their
@@ -190,7 +181,21 @@ ELECTRICITY_MAP_API_URL=https://api-access.electricitymaps.com/free-tier/ \
 grid-intensity --provider=ElectricityMap --location=IN-KA
 ```
 
-### Ember-Climate.org
+### WattTime
+
+[WattTime](https://www.watttime.org/) have carbon intensity data from multiple sources.
+You need to [register](https://www.watttime.org/api-documentation/#authentication) to use the API.
+
+The `location` parameter should be set to a supported location. The `/ba-from-loc`
+endpoint allows you to provide a latitude and longitude. See the [docs](https://www.watttime.org/api-documentation/#determine-grid-region) for more details.
+
+```sh
+WATT_TIME_USER=your-user \
+WATT_TIME_PASSWORD=your-password \
+grid-intensity --provider=WattTime --location=CAISO_NORTH
+```
+
+### Ember
 
 Carbon intensity data from [Ember](https://ember-climate.org/), is embedded in the binary
 in accordance with their licensing - [CC-BY-SA 4.0](https://ember-climate.org/creative-commons/)
@@ -201,17 +206,11 @@ grid-intensity --provider=Ember --location=DE
 
 The `location` parameter should be set to a 2 or 3 char ISO country code.
 
-### WattTime.org
+### UK Carbon Intensity API
 
-[WattTime](https://www.watttime.org/) have carbon intensity data from multiple sources.
-You need to [register](https://www.watttime.org/api-documentation/#authentication) to use the API.
-
-The `location` parameter should be set to a supported location. The `/ba-from-loc`
-endpoint allows you to provide a latitude and longitude. See the [docs](https://www.watttime.org/api-documentation/#determine-grid-region) for more details.
-
+UK Carbon Intensity API https://carbonintensity.org.uk/ this is a public API
+and the only location supported is `UK`.
 
 ```sh
-WATT_TIME_USER=your-user \
-WATT_TIME_PASSWORD=your-password \
-grid-intensity --provider=WattTime --location=CAISO_NORTH
+grid-intensity --provider=CarbonIntensityOrgUK --location=UK
 ```
