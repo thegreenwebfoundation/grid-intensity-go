@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/thegreenwebfoundation/grid-intensity-go/pkg/provider"
 )
@@ -12,9 +13,18 @@ import (
 func main() {
 	// Register via the API
 	// https://www.watttime.org/api-documentation/#register-new-user
+	apiUser := os.Getenv("WATT_TIME_API_USER")
+	if apiUser == "" {
+		log.Fatalln("please set the env variable `WATT_TIME_API_USER`")
+	}
+	apiPassword := os.Getenv("WATT_TIME_API_PASSWORD")
+	if apiPassword != "" {
+		log.Fatalln("please set the env variable `WATT_TIME_API_PASSWORD`")
+	}
+
 	c := provider.WattTimeConfig{
-		APIUser:     "your-user",
-		APIPassword: "your-password",
+		APIUser:     apiUser,
+		APIPassword: apiPassword,
 	}
 	w, err := provider.NewWattTime(c)
 	if err != nil {
