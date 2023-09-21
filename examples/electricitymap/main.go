@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	// Register at https://api-portal.electricitymaps.com/
 	token := os.Getenv("ELECTRICITY_MAP_API_TOKEN")
 	if token == "" {
 		log.Fatalln("please set the env variable `ELECTRICITY_MAP_API_TOKEN`")
