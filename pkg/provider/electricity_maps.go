@@ -91,8 +91,8 @@ func (e *ElectricityMapsClient) GetCarbonIntensity(ctx context.Context, location
 }
 
 func (e *ElectricityMapsClient) intensityURLWithZone(zone string) (string, error) {
-	zonePath := fmt.Sprintf("/carbon-intensity/latest?zone=%s", zone)
-	return buildURL(e.apiURL, zonePath)
+	zoneURL := fmt.Sprintf("/carbon-intensity/latest?zone=%s", zone)
+	return buildURL(e.apiURL, zoneURL)
 }
 
 type electricityMapsData struct {
