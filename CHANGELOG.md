@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Rename Electricity Map provider to Electricity Maps.
+
+### Fixed
+
+- Building URLs now handles if base URL has trailing slashes or not.
+
 ## 0.5.0 2023-05-05
 
 ### Added
