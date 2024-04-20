@@ -4,23 +4,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
 
-type ElectricityMapClient struct {
+type ElectricityMapsClient struct {
 	client *http.Client
 	apiURL string
 	token  string
 }
 
-type ElectricityMapConfig struct {
+type ElectricityMapsConfig struct {
 	Client *http.Client
 	APIURL string
 	Token  string
 }
 
-func NewElectricityMap(config ElectricityMapConfig) (Interface, error) {
+func NewElectricityMaps(config ElectricityMapsConfig) (Interface, error) {
 	if config.Client == nil {
 		config.Client = &http.Client{
 			Timeout: 5 * time.Second,
@@ -30,7 +31,7 @@ func NewElectricityMap(config ElectricityMapConfig) (Interface, error) {
 		config.APIURL = "https://api.electricitymap.org/v3"
 	}
 
-	c := &ElectricityMapClient{
+	c := &ElectricityMapsClient{
 		apiURL: config.APIURL,
 		client: config.Client,
 		token:  config.Token,
@@ -39,12 +40,20 @@ func NewElectricityMap(config ElectricityMapConfig) (Interface, error) {
 	return c, nil
 }
 
-func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, e.intensityURLWithZone(location), nil)
+func (e *ElectricityMapsClient) GetCarbonIntensity(ctx context.Context, location string) ([]CarbonIntensity, error) {
+	intensityURL, err := e.intensityURLWithZone(location)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, intensityURL, nil)
 	req.Header.Add("auth-token", e.token)
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("calling %s", req.URL)
+
 	resp, err := e.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -55,7 +64,7 @@ func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location 
 		return nil, errBadStatus(resp)
 	}
 
-	data := &electricityMapData{}
+	data := &electricityMapsData{}
 	err = json.NewDecoder(resp.Body).Decode(data)
 	if err != nil {
 		return nil, err
@@ -71,7 +80,7 @@ func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location 
 		{
 			EmissionsType: AverageEmissionsType,
 			MetricType:    AbsoluteMetricType,
-			Provider:      ElectricityMap,
+			Provider:      ElectricityMaps,
 			Location:      location,
 			Units:         GramsCO2EPerkWh,
 			ValidFrom:     validFrom,
@@ -81,11 +90,12 @@ func (e *ElectricityMapClient) GetCarbonIntensity(ctx context.Context, location 
 	}, nil
 }
 
-func (e *ElectricityMapClient) intensityURLWithZone(zone string) string {
-	return fmt.Sprintf("%s/carbon-intensity/latest?zone=%s", e.apiURL, zone)
+func (e *ElectricityMapsClient) intensityURLWithZone(zone string) (string, error) {
+	zonePath := fmt.Sprintf("/carbon-intensity/latest?zone=%s", zone)
+	return buildURL(e.apiURL, zonePath)
 }
 
-type electricityMapData struct {
+type electricityMapsData struct {
 	Zone            string  `json:"zone"`
 	CarbonIntensity float64 `json:"carbonIntensity"`
 	DateTime        string  `json:"datetime"`

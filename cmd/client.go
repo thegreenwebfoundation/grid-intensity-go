@@ -18,7 +18,7 @@ func getClient(providerName string, cacheFile string) (provider.Interface, error
 		if err != nil {
 			return nil, fmt.Errorf("could not make carbon intensity uk provider, %w", err)
 		}
-	case provider.ElectricityMap:
+	case provider.ElectricityMaps:
 		token := os.Getenv(electricityMapAPITokenEnvVar)
 		if token == "" {
 			return nil, fmt.Errorf("%q env var must be set", electricityMapAPITokenEnvVar)
@@ -28,13 +28,13 @@ func getClient(providerName string, cacheFile string) (provider.Interface, error
 			return nil, fmt.Errorf("%q env var must be set", electricityMapAPIURLEnvVar)
 		}
 
-		c := provider.ElectricityMapConfig{
+		c := provider.ElectricityMapsConfig{
 			APIURL: url,
 			Token:  token,
 		}
-		client, err = provider.NewElectricityMap(c)
+		client, err = provider.NewElectricityMaps(c)
 		if err != nil {
-			return nil, fmt.Errorf("could not make electricity map provider, %w", err)
+			return nil, fmt.Errorf("could not make electricity maps provider, %w", err)
 		}
 	case provider.Ember:
 		client, err = provider.NewEmber()

@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	"net/url"
+	"path"
 	"time"
 )
 
@@ -21,7 +23,7 @@ const (
 
 	// Supported providers
 	CarbonIntensityOrgUK = "CarbonIntensityOrgUK"
-	ElectricityMap       = "ElectricityMap"
+	ElectricityMaps      = "ElectricityMaps"
 	Ember                = "Ember"
 	WattTime             = "WattTime"
 )
@@ -53,8 +55,8 @@ func GetProviderDetails() []Details {
 			URL:  "carbonintensity.org.uk",
 		},
 		{
-			Name: ElectricityMap,
-			URL:  "electricitymap.org",
+			Name: ElectricityMaps,
+			URL:  "electricitymaps.com",
 		},
 		{
 			Name: Ember,
@@ -65,4 +67,31 @@ func GetProviderDetails() []Details {
 			URL:  "watttime.org",
 		},
 	}
+}
+
+func buildURL(apiURL, relativePath string) (string, error) {
+	baseURL, err := url.Parse(apiURL)
+	if err != nil {
+		return "", err
+	}
+
+	relativeURL, err := url.Parse(relativePath)
+	if err != nil {
+		return "", err
+	}
+
+	// Safely add relative path.
+	baseURL.Path = path.Join(baseURL.Path, relativeURL.Path)
+
+	// Safely merge query strings.
+	baseQuery := baseURL.Query()
+
+	for param, values := range relativeURL.Query() {
+		for _, value := range values {
+			baseQuery.Add(param, value)
+		}
+	}
+
+	baseURL.RawQuery = baseQuery.Encode()
+	return baseURL.String(), nil
 }

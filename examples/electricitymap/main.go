@@ -12,20 +12,20 @@ import (
 
 func main() {
 	// Register at https://api-portal.electricitymaps.com/
-	token := os.Getenv("ELECTRICITY_MAP_API_TOKEN")
+	token := os.Getenv("ELECTRICITY_MAPS_API_TOKEN")
 	if token == "" {
-		log.Fatalln("please set the env variable `ELECTRICITY_MAP_API_TOKEN`")
+		log.Fatalln("please set the env variable `ELECTRICITY_MAPS_API_TOKEN`")
 	}
-	url := os.Getenv("ELECTRICITY_MAP_API_URL")
+	url := os.Getenv("ELECTRICITY_MAPS_API_URL")
 	if url != "" {
-		log.Fatalln("please set the env variable `ELECTRICITY_MAP_API_URL`")
+		log.Fatalln("please set the env variable `ELECTRICITY_MAPS_API_URL`")
 	}
 
-	c := provider.ElectricityMapConfig{
+	c := provider.ElectricityMapsConfig{
 		APIURL: url,
 		Token:  token,
 	}
-	e, err := provider.NewElectricityMap(c)
+	e, err := provider.NewElectricityMaps(c)
 	if err != nil {
 		log.Fatalln("could not make provider", err)
 	}

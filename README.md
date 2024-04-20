@@ -168,16 +168,16 @@ us to integrate more providers please open an [issue](https://github.com/thegree
 
 ### Electricity Maps
 
-[Electricity Map](https://app.electricitymaps.com/map) have carbon intensity data
+[Electricity Maps](https://app.electricitymaps.com/map) have carbon intensity data
 from multiple sources. You need to get an API token and URL from their
 [API portal](https://api-portal.electricitymaps.com/) to use the API. You can use
 their free tier for non-commercial use or sign up for a 30 day trial.
 
-The `location` parameter needs to be set to a zone present in the public [zones](https://static.electricitymap.org/api/docs/index.html#zones) endpoint.
+The `location` parameter needs to be set to a zone present in the public [zones](https://static.electricitymaps.com/api/docs/index.html#zones) endpoint.
 
 ```sh
-ELECTRICITY_MAP_API_TOKEN=your-token \
-ELECTRICITY_MAP_API_URL=https://api-access.electricitymaps.com/free-tier/ \
+ELECTRICITY_MAPS_API_TOKEN=your-token \
+ELECTRICITY_MAPS_API_URL=https://api-access.electricitymaps.com/free-tier/ \
 grid-intensity --provider=ElectricityMap --location=IN-KA
 ```
 

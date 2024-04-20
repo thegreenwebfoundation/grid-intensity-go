@@ -19,17 +19,17 @@ var MockElectricityMapResponse = `{
 	"updatedAt": "2020-01-01T00:00:01.000Z"
 }`
 
-func Test_ElectricityMap_SimpleRequest(t *testing.T) {
+func Test_ElectricityMaps_SimpleRequest(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, MockElectricityMapResponse)
 	}))
 	defer ts.Close()
 
-	c := ElectricityMapConfig{
+	c := ElectricityMapsConfig{
 		APIURL: ts.URL,
 		Token:  "token",
 	}
-	a, err := NewElectricityMap(c)
+	a, err := NewElectricityMaps(c)
 	if err != nil {
 		t.Errorf("Could not make provider: %s", err)
 		return
@@ -44,7 +44,7 @@ func Test_ElectricityMap_SimpleRequest(t *testing.T) {
 		{
 			EmissionsType: "average",
 			MetricType:    "absolute",
-			Provider:      "ElectricityMap",
+			Provider:      "ElectricityMaps",
 			Location:      "IN-KA",
 			Units:         "gCO2e per kWh",
 			ValidFrom:     time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),

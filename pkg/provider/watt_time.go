@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -113,11 +114,19 @@ func (w *WattTimeClient) fetchCarbonIntensityData(ctx context.Context, location 
 }
 
 func (w *WattTimeClient) getAccessToken(ctx context.Context) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, w.loginURL(), nil)
+	loginURL, err := w.loginURL()
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, loginURL, nil)
 	if err != nil {
 		return "", err
 	}
 	req.SetBasicAuth(w.apiUser, w.apiPassword)
+
+	log.Printf("calling %s", req.URL)
+
 	resp, err := w.client.Do(req)
 	if err != nil {
 		return "", err
@@ -143,12 +152,20 @@ func (w *WattTimeClient) getAccessToken(ctx context.Context) (string, error) {
 }
 
 func (w *WattTimeClient) getCarbonIntensityData(ctx context.Context, location string) (*wattTimeIndexData, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, w.indexURL(location), nil)
+	indexURL, err := w.indexURL(location)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, indexURL, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", w.token))
+
+	log.Printf("calling %s", req.URL)
+
 	resp, err := w.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -175,12 +192,13 @@ func (w *WattTimeClient) getCarbonIntensityData(ctx context.Context, location st
 	return &indexData, nil
 }
 
-func (w *WattTimeClient) indexURL(location string) string {
-	return fmt.Sprintf("%s/index?ba=%s", w.apiURL, location)
+func (w *WattTimeClient) indexURL(location string) (string, error) {
+	indexPath := fmt.Sprintf("/index?ba=%s", location)
+	return buildURL(w.apiURL, indexPath)
 }
 
-func (w *WattTimeClient) loginURL() string {
-	return fmt.Sprintf("%s/login", w.apiURL)
+func (w *WattTimeClient) loginURL() (string, error) {
+	return buildURL(w.apiURL, "/login")
 }
 
 func parseCarbonIntensityData(ctx context.Context, location string, indexData *wattTimeIndexData) ([]CarbonIntensity, time.Time, error) {
