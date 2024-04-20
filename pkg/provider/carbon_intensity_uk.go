@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 )
@@ -44,6 +45,9 @@ func (a *CarbonIntensityUKClient) GetCarbonIntensity(ctx context.Context, locati
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("calling %s", req.URL)
+
 	resp, err := a.client.Do(req)
 	if err != nil {
 		return nil, err

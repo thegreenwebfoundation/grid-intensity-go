@@ -47,14 +47,14 @@ spec:
         {{- end }}
         {{- if .Values.electricityMap }}
         {{- if .Values.electricityMap.apiToken }}
-        - name: ELECTRICITY_MAP_API_TOKEN
+        - name: ELECTRICITY_MAPS_API_TOKEN
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: apiToken
         {{- end }}
         {{- if .Values.electricityMap.apiURL }}
-        - name: ELECTRICITY_MAP_API_URL
+        - name: ELECTRICITY_MAPS_API_URL
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
