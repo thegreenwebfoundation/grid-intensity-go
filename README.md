@@ -178,7 +178,7 @@ The `location` parameter needs to be set to a zone present in the public [zones]
 ```sh
 ELECTRICITY_MAPS_API_TOKEN=your-token \
 ELECTRICITY_MAPS_API_URL=https://api-access.electricitymaps.com/free-tier/ \
-grid-intensity --provider=ElectricityMap --location=IN-KA
+grid-intensity --provider=ElectricityMaps --location=IN-KA
 ```
 
 ### WattTime
