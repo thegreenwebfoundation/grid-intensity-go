@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -15,14 +16,15 @@ import (
 )
 
 const (
-	labelLocation = "location"
-	labelNode     = "node"
-	labelProvider = "provider"
-	labelRegion   = "region"
-	labelUnits    = "units"
-	namespace     = "grid_intensity"
-	nodeKey       = "node"
-	regionKey     = "region"
+	labelLocation    = "location"
+	labelNode        = "node"
+	labelProvider    = "provider"
+	labelRegion      = "region"
+	labelUnits       = "units"
+	labelIsEstimated = "is_estimated"
+	namespace        = "grid_intensity"
+	nodeKey          = "node"
+	regionKey        = "region"
 )
 
 func init() {
@@ -51,6 +53,7 @@ var (
 			labelProvider,
 			labelRegion,
 			labelUnits,
+			labelIsEstimated,
 		},
 		nil,
 	)
@@ -64,6 +67,7 @@ var (
 			labelProvider,
 			labelRegion,
 			labelUnits,
+			labelIsEstimated,
 		},
 		nil,
 	)
@@ -162,7 +166,10 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			continue
 		}
 
-		ch <- prometheus.MustNewConstMetric(
+		// log.Printf("desc is %s", desc)
+
+		ch <- prometheus.NewMetricWithTimestamp(data.ValidFrom, prometheus.MustNewConstMetric(
+			// ch <- prometheus.MustNewConstMetric(
 			desc,
 			prometheus.GaugeValue,
 			data.Value,
@@ -171,7 +178,8 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			data.Provider,
 			e.region,
 			data.Units,
-		)
+			strconv.FormatBool(data.IsEstimated),
+		))
 	}
 }
 
