@@ -81,6 +81,7 @@ var (
 			labelProvider,
 			labelRegion,
 			labelUnits,
+			labelIsEstimated,
 		},
 		nil,
 	)
