@@ -195,11 +195,6 @@ func toCarbonIntensity(location string, dataPoint electricityMapsData) (*CarbonI
 	return &carbonIntensityDataPoint, nil
 }
 
-// func (e *ElectricityMapsClient) intensityURLWithZone(zone string) (string, error) {
-// 	zoneURL := fmt.Sprintf("/carbon-intensity/latest?zone=%s", zone)
-// 	return buildURL(e.apiURL, zoneURL)
-// }
-
 func (e *ElectricityMapsClient) historicIntensityURLWithZone(zone string) (string, error) {
 	zoneURL := fmt.Sprintf("/carbon-intensity/history?zone=%s", zone)
 	return buildURL(e.apiURL, zoneURL)

@@ -167,10 +167,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			continue
 		}
 
-		// log.Printf("desc is %s", desc)
-
 		ch <- prometheus.NewMetricWithTimestamp(data.ValidFrom, prometheus.MustNewConstMetric(
-			// ch <- prometheus.MustNewConstMetric(
 			desc,
 			prometheus.GaugeValue,
 			data.Value,
