@@ -27,7 +27,7 @@ const (
 )
 
 func init() {
-	exporterCmd.Flags().StringP(locationKey, "l", "", "Location code for provider")
+	exporterCmd.Flags().StringP(locationKey, "l", "", "Location codes for provider, for multiple locations separate with a comma")
 	exporterCmd.Flags().StringP(nodeKey, "n", "", "Node where the exporter is running")
 	exporterCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 	exporterCmd.Flags().StringP(regionKey, "r", "", "Region where the exporter is running")

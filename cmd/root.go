@@ -58,7 +58,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP(locationKey, "l", "", "Location code for provider")
+	rootCmd.Flags().StringP(locationKey, "l", "", "Location codes for provider, for multiple locations separate with a comma")
 	rootCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 
 	// Also support environment variables.
