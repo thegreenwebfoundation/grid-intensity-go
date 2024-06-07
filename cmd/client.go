@@ -48,7 +48,7 @@ func getClient(providerName string, cacheFile string) (provider.Interface, error
 		}
 
 		password := os.Getenv(wattTimePasswordEnvVar)
-		if user == "" {
+		if password == "" {
 			return nil, fmt.Errorf("%q env var must be set", wattTimePasswordEnvVar)
 		}
 
