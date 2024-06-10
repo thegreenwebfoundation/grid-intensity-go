@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -28,7 +29,7 @@ const (
 )
 
 func init() {
-	exporterCmd.Flags().StringP(locationKey, "l", "", "Location code for provider")
+	exporterCmd.Flags().StringP(locationKey, "l", "", "Location codes for provider, for multiple locations separate with a comma")
 	exporterCmd.Flags().StringP(nodeKey, "n", "", "Node where the exporter is running")
 	exporterCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 	exporterCmd.Flags().StringP(regionKey, "r", "", "Region where the exporter is running")
@@ -155,9 +156,15 @@ func NewExporter(config ExporterConfig) (*Exporter, error) {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
-	result, err := e.client.GetCarbonIntensity(ctx, e.location)
-	if err != nil {
-		log.Printf("failed to get carbon intensity %#v", err)
+	var result []provider.CarbonIntensity
+	locationCodes := strings.Split(e.location, ",")
+
+	for _, locationCode := range locationCodes {
+		res, err := e.client.GetCarbonIntensity(ctx, locationCode)
+		if err != nil {
+			log.Printf("could not get carbon intensity for location %s, %#v", locationCode, err)
+		}
+		result = append(result, res...)
 	}
 
 	for _, data := range result {
