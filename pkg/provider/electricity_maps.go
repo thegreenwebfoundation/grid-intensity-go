@@ -64,19 +64,14 @@ func (e *ElectricityMapsClient) GetCarbonIntensity(ctx context.Context, location
 		return nil, errBadStatus(resp)
 	}
 
-	type EMHistoryResponse struct {
-		Zone    string
-		History []electricityMapsData
-	}
-
-	historyResponse := &EMHistoryResponse{}
+	historyResponse := &electricityMapsHistoryResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&historyResponse)
 	if err != nil {
 		return nil, err
 	}
 
 	var carbonIntensityPoints []CarbonIntensity
-	var recentDatapoints = NewMostRecentDataPoints()
+	var recentDatapoints = NewElectricityMapsDatapoints()
 
 	for _, dataPoint := range historyResponse.History {
 
@@ -106,31 +101,31 @@ func (e *ElectricityMapsClient) GetCarbonIntensity(ctx context.Context, location
 
 // Helper struct to remove clutter in the calling function
 // while finding the latest (and greatest) data points
-type mostRecentDatapoints struct {
+type electricityMapsDatapoints struct {
 	estimated      electricityMapsData
 	real           electricityMapsData
 	estimatedFound bool
 	realFound      bool
 }
 
-func NewMostRecentDataPoints() mostRecentDatapoints {
-	dataPoints := mostRecentDatapoints{}
+func NewElectricityMapsDatapoints() electricityMapsDatapoints {
+	dataPoints := electricityMapsDatapoints{}
 	dataPoints.estimatedFound = false
 	dataPoints.realFound = false
 	return dataPoints
 }
 
-func (m *mostRecentDatapoints) setEstimated(dataPoint electricityMapsData) {
+func (m *electricityMapsDatapoints) setEstimated(dataPoint electricityMapsData) {
 	m.estimated = dataPoint
 	m.estimatedFound = true
 }
 
-func (m *mostRecentDatapoints) setReal(dataPoint electricityMapsData) {
+func (m *electricityMapsDatapoints) setReal(dataPoint electricityMapsData) {
 	m.real = dataPoint
 	m.realFound = true
 }
 
-func (m *mostRecentDatapoints) update(dataPoint electricityMapsData) error {
+func (m *electricityMapsDatapoints) update(dataPoint electricityMapsData) error {
 
 	dataPointDateTime, err := stringToTime(dataPoint.DateTime)
 	if err != nil {
@@ -206,4 +201,9 @@ type electricityMapsData struct {
 	DateTime        string  `json:"datetime"`
 	UpdatedAt       string  `json:"updatedAt"`
 	IsEstimated     bool    `json:"isEstimated"`
+}
+
+type electricityMapsHistoryResponse struct {
+	Zone    string
+	History []electricityMapsData
 }
