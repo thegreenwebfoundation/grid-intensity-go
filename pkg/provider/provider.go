@@ -37,6 +37,7 @@ type CarbonIntensity struct {
 	ValidFrom     time.Time `json:"valid_from"`
 	ValidTo       time.Time `json:"valid_to"`
 	Value         float64   `json:"value"`
+	IsEstimated   bool      `json:"is_estimated"`
 }
 
 type Details struct {

@@ -234,6 +234,7 @@ func parseCarbonIntensityData(ctx context.Context, location string, indexData *w
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,
 			Value:         percent,
+			IsEstimated:   true,
 		}
 		result = append(result, relative)
 	}
@@ -252,6 +253,7 @@ func parseCarbonIntensityData(ctx context.Context, location string, indexData *w
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,
 			Value:         moer,
+			IsEstimated:   true,
 		}
 		result = append(result, marginal)
 	}

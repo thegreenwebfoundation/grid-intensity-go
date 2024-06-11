@@ -50,6 +50,7 @@ func Test_ElectricityMaps_SimpleRequest(t *testing.T) {
 			ValidFrom:     time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 			ValidTo:       time.Date(2020, 1, 1, 1, 0, 0, 0, time.UTC),
 			Value:         312,
+			IsEstimated:   true,
 		},
 	}
 	if !reflect.DeepEqual(expected, res) {

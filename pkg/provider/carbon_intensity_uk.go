@@ -94,6 +94,7 @@ func (a *CarbonIntensityUKClient) GetCarbonIntensity(ctx context.Context, locati
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,
 			Value:         data.Intensity.Actual,
+			IsEstimated:   true,
 		},
 	}, nil
 }

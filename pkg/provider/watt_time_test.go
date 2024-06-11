@@ -65,6 +65,7 @@ func Test_WattTime_SimpleRequest(t *testing.T) {
 			ValidFrom:     time.Date(2022, 7, 6, 16, 25, 0, 0, time.UTC),
 			ValidTo:       time.Date(2022, 7, 6, 16, 30, 0, 0, time.UTC),
 			Value:         78,
+			IsEstimated:   true,
 		},
 		{
 			EmissionsType: "marginal",
@@ -75,6 +76,7 @@ func Test_WattTime_SimpleRequest(t *testing.T) {
 			ValidFrom:     time.Date(2022, 7, 6, 16, 25, 0, 0, time.UTC),
 			ValidTo:       time.Date(2022, 7, 6, 16, 30, 0, 0, time.UTC),
 			Value:         916,
+			IsEstimated:   true,
 		},
 	}
 	if !reflect.DeepEqual(expected, result) {
