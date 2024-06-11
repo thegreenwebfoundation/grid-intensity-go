@@ -50,6 +50,7 @@ func (a *EmberClient) GetCarbonIntensity(ctx context.Context, location string) (
 			ValidFrom:     validFrom,
 			ValidTo:       validTo,
 			Value:         result.EmissionsIntensityGCO2PerKWH,
+			IsEstimated:   true,
 		},
 	}, nil
 }
