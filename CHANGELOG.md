@@ -14,6 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.7.0 2024-06-11
+
+### Changed
+
+- Breaking change to add timestamps to exporter metrics with when provider
+last updated the value.
+- Update Electricity Maps provider to return both estimated and actual values.
+Note: There is a delay before actual values are available.
+- Update location parameter to support multiple locations separated with a
+comma.
+
 ## 0.6.0 2024-05-15
 
 ### Changed
