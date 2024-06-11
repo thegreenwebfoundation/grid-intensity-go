@@ -58,7 +58,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP(locationKey, "l", "", "Location code for provider")
+	rootCmd.Flags().StringP(locationKey, "l", "", "Location codes for provider, for multiple locations separate with a comma")
 	rootCmd.Flags().StringP(providerKey, "p", provider.Ember, "Provider of carbon intensity data")
 
 	// Also support environment variables.
@@ -103,25 +103,27 @@ func runRoot() error {
 	if err != nil {
 		return fmt.Errorf("could not read config for %#q, %w", locationKey, err)
 	}
-
+	locationCodes := strings.Split(locationCode, ",")
 	var cacheFile string
 
 	switch providerName {
 	case provider.CarbonIntensityOrgUK:
-		if locationCode == "" {
-			locationCode = "UK"
+		if locationCodes[0] == "" {
+			locationCodes[0] = "UK"
 		}
-		if locationCode != "UK" {
+		// Since only UK is supported with this Provider we expect the user to only provide one location.
+		if locationCodes[0] != "UK" {
 			return fmt.Errorf("only location UK is supported")
 		}
-		viper.Set(locationKey, locationCode)
+		viper.Set(locationKey, locationCodes)
 	case provider.Ember:
-		if locationCode == "" {
-			locationCode, err = getCountryCode()
+		if len(locationCodes) == 0 {
+			// Default to the user's locale if no LocationCodes are provided
+			locationCodes[0], err = getCountryCode()
 			if err != nil {
 				return err
 			}
-			viper.Set(locationKey, locationCode)
+			viper.Set(locationKey, locationCodes)
 		}
 	case provider.WattTime:
 		homeDir, err := os.UserHomeDir()
@@ -137,16 +139,19 @@ func runRoot() error {
 		return fmt.Errorf("could not get client, %w", err)
 	}
 
-	res, err := client.GetCarbonIntensity(ctx, locationCode)
-	if err != nil {
-		return fmt.Errorf("could not get carbon intensity, %w", err)
+	var result []provider.CarbonIntensity
+	for _, locationCode := range locationCodes {
+		res, err := client.GetCarbonIntensity(ctx, locationCode)
+		if err != nil {
+			return fmt.Errorf("could not get carbon intensity for location %s, %w", locationCode, err)
+		}
+		result = append(result, res...)
 	}
 
-	bytes, err := json.MarshalIndent(res, "", "\t")
+	bytes, err := json.MarshalIndent(result, "", "\t")
 	if err != nil {
 		return fmt.Errorf("could not marshal json, %w", err)
 	}
-
 	fmt.Println(string(bytes))
 
 	err = writeConfig()
