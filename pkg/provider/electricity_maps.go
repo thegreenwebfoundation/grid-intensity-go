@@ -74,10 +74,9 @@ func (e *ElectricityMapsClient) GetCarbonIntensity(ctx context.Context, location
 	var recentDatapoints = NewElectricityMapsDatapoints()
 
 	for _, dataPoint := range historyResponse.History {
-
 		// We get the most recent value (which is usually estimated)
 		// and the most recent value which is registered (not estimated)
-		// and they wil end up in the recentDatapoints variable
+		// and they will end up in the recentDatapoints variable
 		recentDatapoints.update(dataPoint)
 
 	}
