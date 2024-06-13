@@ -124,8 +124,17 @@ View the metrics with curl.
 $ curl -s http://localhost:8000/metrics | grep grid
 # HELP grid_intensity_carbon_average Average carbon intensity for the electricity grid in this location.
 # TYPE grid_intensity_carbon_average gauge
-grid_intensity_carbon_average{provider="Ember",location="FR",units="gCO2 per kWh"} 67.781
+grid_intensity_carbon_average{provider="Ember",location="FR",units="gCO2 per kWh"} 67.781 1718258400000
 ```
+
+**Note about Prometheus and samples in the past**
+
+If you are using the exporter with ElectricityMaps as provider, it will return a value for estimated, which be the most recent one, and another value for the real value, which can be a few hours in the past. Depending on your Prometheus installation, it could be that the metrics that have a timestamp in the past are not accepted, with an error such as this:
+
+`Error on ingesting samples that are too old or are too far into the future`
+
+In that case, you can configure the property `tsdb.outOfOrderTimeWindow` to extend the time window accepted, for example to `3h`.
+
 
 ### Docker Image
 
