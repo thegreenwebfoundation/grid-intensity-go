@@ -60,7 +60,7 @@ func Test_GridIntensityMetric(t *testing.T) {
 		region = "global"
 	}
 
-	expectedMetricText := fmt.Sprintf("grid_intensity_carbon_average{location=\"GBR\",node=\"%s\",provider=\"Ember\",region=\"%s\",units=\"gCO2e per kWh\"}",
+	expectedMetricText := fmt.Sprintf("grid_intensity_carbon_average{is_estimated=\"true\",location=\"GBR\",node=\"%s\",provider=\"Ember\",region=\"%s\",units=\"gCO2e per kWh\"}",
 		node, region)
 
 	if !strings.Contains(metrics, expectedMetricText) {

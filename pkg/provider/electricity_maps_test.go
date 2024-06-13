@@ -14,9 +14,15 @@ import (
 
 var MockElectricityMapResponse = `{
 	"zone": "IN-KA",
-	"carbonIntensity": 312,
-	"datetime": "2020-01-01T00:00:00.000Z",
-	"updatedAt": "2020-01-01T00:00:01.000Z"
+	"history": [
+		{
+			"zone": "IN-KA",
+			"carbonIntensity": 312,
+			"datetime": "2020-01-01T00:00:00.000Z",
+			"updatedAt": "2020-01-01T00:00:01.000Z",
+			"isEstimated": true
+		}
+	]
 }`
 
 func Test_ElectricityMaps_SimpleRequest(t *testing.T) {

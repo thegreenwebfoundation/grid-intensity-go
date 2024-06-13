@@ -6,7 +6,10 @@ jobs:
     steps:
       - 
         name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      -
+        name: Set up Go
+        uses: actions/setup-go@v5
       - 
         name: Go test
         run: go test ./...
