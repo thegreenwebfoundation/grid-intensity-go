@@ -129,7 +129,7 @@ grid_intensity_carbon_average{provider="Ember",location="FR",units="gCO2 per kWh
 
 **Note about Prometheus and samples in the past**
 
-If you are using the exporter with ElectricityMaps as provider, it will return a value for estimated, which be the most recent one, and another value for the real value, which can be a few hours in the past. Depending on your Prometheus installation, it could be that the metrics that have a timestamp in the past are not accepted, with an error such as this:
+If you are using the exporter with the ElectricityMaps provider, it will return a value for estimated, which will be the most recent one, and another value for the real value, which can be a few hours in the past. Depending on your Prometheus installation, it could be that the metrics that have a timestamp in the past are not accepted, with an error such as this:
 
 `Error on ingesting samples that are too old or are too far into the future`
 
