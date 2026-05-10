@@ -16,11 +16,11 @@ image:
 #   provider: CarbonIntensityOrgUK
 #   location: UK
 
-# ElectricityMap provider supports multiple countries but you will need to set
-# an API key in electricityMap.apiToken 
+# ElectricityMaps provider supports multiple countries but you will need to set
+# an API key in electricityMap.apiToken
 #
 # gridIntensity:
-#   provider: ElectricityMap
+#   provider: ElectricityMaps
 #   location: IN-KA
 
 # WattTime provider supports multiple countries but you will need to set an API
