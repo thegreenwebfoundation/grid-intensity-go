@@ -25,6 +25,7 @@ const (
 	CarbonIntensityOrgUK = "CarbonIntensityOrgUK"
 	ElectricityMaps      = "ElectricityMaps"
 	Ember                = "Ember"
+	GridCarbon           = "GridCarbon"
 	WattTime             = "WattTime"
 )
 
@@ -62,6 +63,10 @@ func GetProviderDetails() []Details {
 		{
 			Name: Ember,
 			URL:  "ember-climate.org",
+		},
+		{
+			Name: GridCarbon,
+			URL:  "gridcarbon.dev",
 		},
 		{
 			Name: WattTime,

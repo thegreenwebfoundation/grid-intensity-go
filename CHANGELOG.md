@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- GridCarbon provider: hourly average carbon intensity for 45 zones (33 European
+bidding zones, 11 US balancing authorities, Great Britain) from the keyless public
+API at https://gridcarbon.dev. Select with `--provider GridCarbon --location <zone>`.
+
 ## 0.7.0 2024-06-11
 
 ### Changed

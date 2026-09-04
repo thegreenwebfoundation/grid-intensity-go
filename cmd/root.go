@@ -125,6 +125,10 @@ func runRoot() error {
 			}
 			viper.Set(locationKey, locationCodes)
 		}
+	case provider.GridCarbon:
+		if locationCodes[0] == "" {
+			return fmt.Errorf("provider %s needs a zone code as the location parameter, e.g. FR, DE-LU or US-NYISO; the list is at https://api.gridcarbon.dev/v1/zones", provider.GridCarbon)
+		}
 	case provider.WattTime:
 		homeDir, err := os.UserHomeDir()
 		if err != nil {

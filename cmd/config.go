@@ -11,6 +11,7 @@ import (
 const (
 	electricityMapAPITokenEnvVar = "ELECTRICITY_MAPS_API_TOKEN"
 	electricityMapAPIURLEnvVar   = "ELECTRICITY_MAPS_API_URL"
+	gridCarbonAPIURLEnvVar       = "GRID_CARBON_API_URL"
 	wattTimeUserEnvVar           = "WATT_TIME_USER"
 	wattTimePasswordEnvVar       = "WATT_TIME_PASSWORD"
 )

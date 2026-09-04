@@ -223,3 +223,22 @@ and the only location supported is `UK`.
 ```sh
 grid-intensity --provider=CarbonIntensityOrgUK --location=UK
 ```
+
+### gridcarbon
+
+[gridcarbon](https://gridcarbon.dev) serves hourly average carbon intensity for 45 zones —
+33 European bidding zones (ENTSO-E), 11 US balancing authorities (EIA-930) and Great Britain
+(NESO) — as a public API with no key or signup. Values are production-based lifecycle
+figures (IPCC AR5) computed from the published generation mix; the
+[methodology](https://gridcarbon.dev/methodology) page lists the factors and known biases.
+
+```sh
+grid-intensity --provider=GridCarbon --location=FR
+```
+
+The `location` parameter is a gridcarbon zone code (`FR`, `DE-LU`, `US-NYISO`, `GB`, …);
+the full list is at https://api.gridcarbon.dev/v1/zones. Two things to know: `GB` republishes
+NESO's operational (combustion-only) number and is not comparable in level with the other
+zones, and its newest half-hour is a forecast, returned with `is_estimated: true`. US zones
+run about a day behind their operators' publishing schedule. Set `GRID_CARBON_API_URL` to
+point at a different origin (for example a test server).

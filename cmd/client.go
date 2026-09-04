@@ -36,6 +36,14 @@ func getClient(providerName string, cacheFile string) (provider.Interface, error
 		if err != nil {
 			return nil, fmt.Errorf("could not make electricity maps provider, %w", err)
 		}
+	case provider.GridCarbon:
+		c := provider.GridCarbonConfig{
+			APIURL: os.Getenv(gridCarbonAPIURLEnvVar),
+		}
+		client, err = provider.NewGridCarbon(c)
+		if err != nil {
+			return nil, fmt.Errorf("could not make gridcarbon provider, %w", err)
+		}
 	case provider.Ember:
 		client, err = provider.NewEmber()
 		if err != nil {
